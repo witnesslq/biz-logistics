@@ -1,0 +1,10 @@
+package cc.aisc.logistics.mapper.vehicle;
+
+import cc.aisc.commons.base.BaseMapper;
+import cc.aisc.logistics.model.vehicle.Tractor;
+
+import java.util.List;
+
+public interface TractorMapper extends BaseMapper<Tractor, Long> {
+    List<Tractor> selectByMultiConditioned(Tractor con);
+}

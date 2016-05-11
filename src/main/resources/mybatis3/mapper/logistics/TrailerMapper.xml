@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cc.aisc.logistics.mapper.vehicle.TrailerMapper" >
+  <resultMap id="BaseResultMap" type="cc.aisc.logistics.model.vehicle.Trailer" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="vin" property="vin" jdbcType="VARCHAR" />
+    <result column="plate_no" property="plateNo" jdbcType="VARCHAR" />
+    <result column="drv_lisn" property="drvLisn" jdbcType="VARCHAR" />
+    <result column="manufacturer" property="manufacturer" jdbcType="VARCHAR" />
+    <result column="veh_brand" property="vehBrand" jdbcType="VARCHAR" />
+    <result column="veh_model" property="vehModel" jdbcType="VARCHAR" />
+    <result column="slot_amt" property="slotAmt" jdbcType="INTEGER" />
+    <result column="slot_type" property="slotType" typeHandler="org.apache.ibatis.type.EnumOrdinalTypeHandler" />
+    <result column="frame_type" property="frameType" typeHandler="org.apache.ibatis.type.EnumOrdinalTypeHandler" />
+    <result column="bridge" property="bridge" jdbcType="VARCHAR" />
+    <result column="tyre_type" property="tyreType" typeHandler="org.apache.ibatis.type.EnumOrdinalTypeHandler" />
+    <result column="lift_type" property="liftType" typeHandler="org.apache.ibatis.type.EnumOrdinalTypeHandler" />
+    <result column="mnftr_date" property="mnftrDate" jdbcType="TIMESTAMP" />
+    <result column="pucs_date" property="pucsDate" jdbcType="TIMESTAMP" />
+    <result column="year_inuse" property="yearInuse" jdbcType="CHAR" />
+    <result column="veh_lenght" property="vehLenght" jdbcType="SMALLINT" />
+    <result column="veh_width" property="vehWidth" jdbcType="SMALLINT" />
+    <result column="veh_height" property="vehHeight" jdbcType="SMALLINT" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="belong_comid" property="belongComid" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, vin, plate_no, drv_lisn, manufacturer, veh_brand, veh_model, slot_amt, slot_type, 
+    frame_type, bridge, tyre_type, lift_type, mnftr_date, pucs_date, year_inuse, veh_lenght, 
+    veh_width, veh_height, remark, belong_comid
+  </sql>
+  <select id="selectByMultiConditioned" parameterType="cc.aisc.logistics.model.vehicle.Trailer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from veh_trailer
+    where 1 = 1
+    <if test="plateNo!=null and palteNo!=''">
+      AND  plate_no LIKE CONCAT(CONCAT('%',#{plateNo,jdbcType=VARCHAR},'%'))
+    </if>
+    <if test="manufacturer!=null and manufacturer!=''">
+      AND manufacturer LIKE CONCAT(CONCAT('%',#{manufacturer,jdbcType=VARCHAR},'%'))
+    </if>
+    <if test="vehBrand!=null and vehBrand!=''">
+      AND  veh_brand LIKE CONCAT(CONCAT('%',#{vehBrand,jdbcType=VARCHAR},'%'))
+    </if>
+    <if test="vehModel!=null and vehModel!=''">
+      AND  veh_model LIKE CONCAT(CONCAT('%',#{vehModel,jdbcType=VARCHAR},'%'))
+    </if>
+    <if test="bridge!=null and bridge!=''">
+      AND  bridge LIKE CONCAT(CONCAT('%',#{bridge,jdbcType=VARCHAR},'%'))
+    </if>
+    <if test="vin!=null and vin!=''">
+      AND  vin = #{vin,jdbcType=VARCHAR}
+    </if>
+    <if test="slotType!=null">
+      AND slot_type = #{slotType,jdbcType=INTEGER}
+    </if>
+    <if test="frameType!=null">
+      AND frame_type = #{frameType,jdbcType=INTEGER}
+    </if>
+    <if test="tyreType!=null">
+      AND tyre_type = #{tyreType,jdbcType=INTEGER}
+    </if>
+    <if test="liftType!=null">
+      AND lift_type = #{liftType,jdbcType=INTEGER}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from veh_trailer
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from veh_trailer
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="cc.aisc.logistics.model.vehicle.Trailer" >
+    <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into veh_trailer (vin, plate_no, drv_lisn, 
+      manufacturer, veh_brand, veh_model, 
+      slot_amt, slot_type, frame_type, 
+      bridge, tyre_type, lift_type, 
+      mnftr_date, pucs_date, year_inuse, 
+      veh_lenght, veh_width, veh_height, 
+      remark, belong_comid)
+    values (#{vin,jdbcType=VARCHAR}, #{plateNo,jdbcType=VARCHAR}, #{drvLisn,jdbcType=VARCHAR}, 
+      #{manufacturer,jdbcType=VARCHAR}, #{vehBrand,jdbcType=VARCHAR}, #{vehModel,jdbcType=VARCHAR}, 
+      #{slotAmt,jdbcType=INTEGER}, #{slotType,typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler}, #{frameType,typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler},
+      #{bridge,jdbcType=VARCHAR}, #{tyreType,typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler}, #{liftType,typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler},
+      #{mnftrDate,jdbcType=TIMESTAMP}, #{pucsDate,jdbcType=TIMESTAMP}, #{yearInuse,jdbcType=CHAR},
+      #{vehLenght,jdbcType=SMALLINT}, #{vehWidth,jdbcType=SMALLINT}, #{vehHeight,jdbcType=SMALLINT}, 
+      #{remark,jdbcType=VARCHAR}, #{belongComid,jdbcType=BIGINT})
+  </insert>
+  <insert id="insertSelective" parameterType="cc.aisc.logistics.model.vehicle.Trailer" >
+    <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into veh_trailer
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="vin != null" >
+        vin,
+      </if>
+      <if test="plateNo != null" >
+        plate_no,
+      </if>
+      <if test="drvLisn != null" >
+        drv_lisn,
+      </if>
+      <if test="manufacturer != null" >
+        manufacturer,
+      </if>
+      <if test="vehBrand != null" >
+        veh_brand,
+      </if>
+      <if test="vehModel != null" >
+        veh_model,
+      </if>
+      <if test="slotAmt != null" >
+        slot_amt,
+      </if>
+      <if test="slotType != null" >
+        slot_type,
+      </if>
+      <if test="frameType != null" >
+        frame_type,
+      </if>
+      <if test="bridge != null" >
+        bridge,
+      </if>
+      <if test="tyreType != null" >
+        tyre_type,
+      </if>
+      <if test="liftType != null" >
+        lift_type,
+      </if>
+      <if test="mnftrDate != null" >
+        mnftr_date,
+      </if>
+      <if test="pucsDate != null" >
+        pucs_date,
+      </if>
+      <if test="yearInuse != null" >
+        year_inuse,
+      </if>
+      <if test="vehLenght != null" >
+        veh_lenght,
+      </if>
+      <if test="vehWidth != null" >
+        veh_width,
+      </if>
+      <if test="vehHeight != null" >
+        veh_height,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+      <if test="belongComid != null" >
+        belong_comid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="vin != null" >
+        #{vin,jdbcType=VARCHAR},
+      </if>
+      <if test="plateNo != null" >
+        #{plateNo,jdbcType=VARCHAR},
+      </if>
+      <if test="drvLisn != null" >
+        #{drvLisn,jdbcType=VARCHAR},
+      </if>
+      <if test="manufacturer != null" >
+        #{manufacturer,jdbcType=VARCHAR},
+      </if>
+      <if test="vehBrand != null" >
+        #{vehBrand,jdbcType=VARCHAR},
+      </if>
+      <if test="vehModel != null" >
+        #{vehModel,jdbcType=VARCHAR},
+      </if>
+      <if test="slotAmt != null" >
+        #{slotAmt,jdbcType=INTEGER},
+      </if>
+      <if test="slotType != null" >
+        #{slotType,typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler},
+      </if>
+      <if test="frameType != null" >
+        #{frameType,typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler},
+      </if>
+      <if test="bridge != null" >
+        #{bridge,jdbcType=VARCHAR},
+      </if>
+      <if test="tyreType != null" >
+        #{tyreType,typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler},
+      </if>
+      <if test="liftType != null" >
+        #{liftType,typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler},
+      </if>
+      <if test="mnftrDate != null" >
+        #{mnftrDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="pucsDate != null" >
+        #{pucsDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="yearInuse != null" >
+        #{yearInuse,jdbcType=CHAR},
+      </if>
+      <if test="vehLenght != null" >
+        #{vehLenght,jdbcType=SMALLINT},
+      </if>
+      <if test="vehWidth != null" >
+        #{vehWidth,jdbcType=SMALLINT},
+      </if>
+      <if test="vehHeight != null" >
+        #{vehHeight,jdbcType=SMALLINT},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="belongComid != null" >
+        #{belongComid,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cc.aisc.logistics.model.vehicle.Trailer" >
+    update veh_trailer
+    <set >
+      <if test="vin != null" >
+        vin = #{vin,jdbcType=VARCHAR},
+      </if>
+      <if test="plateNo != null" >
+        plate_no = #{plateNo,jdbcType=VARCHAR},
+      </if>
+      <if test="drvLisn != null" >
+        drv_lisn = #{drvLisn,jdbcType=VARCHAR},
+      </if>
+      <if test="manufacturer != null" >
+        manufacturer = #{manufacturer,jdbcType=VARCHAR},
+      </if>
+      <if test="vehBrand != null" >
+        veh_brand = #{vehBrand,jdbcType=VARCHAR},
+      </if>
+      <if test="vehModel != null" >
+        veh_model = #{vehModel,jdbcType=VARCHAR},
+      </if>
+      <if test="slotAmt != null" >
+        slot_amt = #{slotAmt,jdbcType=INTEGER},
+      </if>
+      <if test="slotType != null" >
+        slot_type = #{slotType,typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler},
+      </if>
+      <if test="frameType != null" >
+        frame_type = #{frameType,typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler},
+      </if>
+      <if test="bridge != null" >
+        bridge = #{bridge,jdbcType=VARCHAR},
+      </if>
+      <if test="tyreType != null" >
+        tyre_type = #{tyreType,typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler},
+      </if>
+      <if test="liftType != null" >
+        lift_type = #{liftType,typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler},
+      </if>
+      <if test="mnftrDate != null" >
+        mnftr_date = #{mnftrDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="pucsDate != null" >
+        pucs_date = #{pucsDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="yearInuse != null" >
+        year_inuse = #{yearInuse,jdbcType=CHAR},
+      </if>
+      <if test="vehLenght != null" >
+        veh_lenght = #{vehLenght,jdbcType=SMALLINT},
+      </if>
+      <if test="vehWidth != null" >
+        veh_width = #{vehWidth,jdbcType=SMALLINT},
+      </if>
+      <if test="vehHeight != null" >
+        veh_height = #{vehHeight,jdbcType=SMALLINT},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="belongComid != null" >
+        belong_comid = #{belongComid,jdbcType=BIGINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cc.aisc.logistics.model.vehicle.Trailer" >
+    update veh_trailer
+    set vin = #{vin,jdbcType=VARCHAR},
+      plate_no = #{plateNo,jdbcType=VARCHAR},
+      drv_lisn = #{drvLisn,jdbcType=VARCHAR},
+      manufacturer = #{manufacturer,jdbcType=VARCHAR},
+      veh_brand = #{vehBrand,jdbcType=VARCHAR},
+      veh_model = #{vehModel,jdbcType=VARCHAR},
+      slot_amt = #{slotAmt,jdbcType=INTEGER},
+      slot_type = #{slotType,typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler},
+      frame_type = #{frameType,typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler},
+      bridge = #{bridge,jdbcType=VARCHAR},
+      tyre_type = #{tyreType,typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler},
+      lift_type = #{liftType,typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler},
+      mnftr_date = #{mnftrDate,jdbcType=TIMESTAMP},
+      pucs_date = #{pucsDate,jdbcType=TIMESTAMP},
+      year_inuse = #{yearInuse,jdbcType=CHAR},
+      veh_lenght = #{vehLenght,jdbcType=SMALLINT},
+      veh_width = #{vehWidth,jdbcType=SMALLINT},
+      veh_height = #{vehHeight,jdbcType=SMALLINT},
+      remark = #{remark,jdbcType=VARCHAR},
+      belong_comid = #{belongComid,jdbcType=BIGINT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cc.aisc.logistics.mapper.vehicle.TractorMapper" >
+  <resultMap id="BaseResultMap" type="cc.aisc.logistics.model.vehicle.Tractor" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="plate_no" property="plateNo" jdbcType="VARCHAR" />
+    <result column="manufacturer" property="manufacturer" jdbcType="VARCHAR" />
+    <result column="veh_brand" property="vehBrand" jdbcType="VARCHAR" />
+    <result column="veh_model" property="vehModel" jdbcType="VARCHAR" />
+    <result column="power" property="power" jdbcType="SMALLINT" />
+    <result column="style" property="style" jdbcType="VARCHAR" />
+    <result column="vin" property="vin" jdbcType="VARCHAR" />
+    <result column="drv_lisn" property="drvLisn" jdbcType="VARCHAR" />
+    <result column="logi_lisn" property="logiLisn" jdbcType="VARCHAR" />
+    <result column="isrn_dtl_id" property="isrnDtlId" jdbcType="BIGINT" />
+    <result column="prdt_date" property="prdtDate" jdbcType="TIMESTAMP" />
+    <result column="pucs_date" property="pucsDate" jdbcType="TIMESTAMP" />
+    <result column="lisn_date" property="lisnDate" jdbcType="CHAR" />
+    <result column="chassis_no" property="chassisNo" jdbcType="VARCHAR" />
+    <result column="ems_std" property="emsStd" typeHandler="org.apache.ibatis.type.EnumOrdinalTypeHandler" />
+    <result column="veh_length" property="vehLength" jdbcType="SMALLINT" />
+    <result column="veh_width" property="vehWidth" jdbcType="SMALLINT" />
+    <result column="veh_height" property="vehHeight" jdbcType="SMALLINT" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="belong_comid" property="belongComid" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, plate_no, manufacturer, veh_brand, veh_model, `power`, `style`, vin, drv_lisn, 
+    logi_lisn, isrn_dtl_id, prdt_date, pucs_date, lisn_date, chassis_no, ems_std, veh_length, 
+    veh_width, veh_height, remark, belong_comid
+  </sql>
+  <select id="selectByMultiConditioned" parameterType="cc.aisc.logistics.model.vehicle.Tractor" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from veh_tractor
+    where 1 = 1
+    <if test="plateNo!=null and palteNo!=''">
+      AND  plate_no LIKE CONCAT(CONCAT('%',#{plateNo,jdbcType=VARCHAR},'%'))
+    </if>
+    <if test="manufacturer!=null and manufacturer!=''">
+      AND manufacturer LIKE CONCAT(CONCAT('%',#{manufacturer,jdbcType=VARCHAR},'%'))
+    </if>
+    <if test="vehBrand!=null and vehBrand!=''">
+      AND  veh_brand LIKE CONCAT(CONCAT('%',#{vehBrand,jdbcType=VARCHAR},'%'))
+    </if>
+    <if test="vehModel!=null and vehModel!=''">
+      AND  veh_model LIKE CONCAT(CONCAT('%',#{vehModel,jdbcType=VARCHAR},'%'))
+    </if>
+    <if test="power!=null">
+      AND `power` = #{power,jdbcType=INTEGER}
+    </if>
+    <if test="drvLisn!=null and drvLisn!=''">
+      AND  drv_lisn LIKE CONCAT(CONCAT('%',#{drvLisn,jdbcType=VARCHAR},'%'))
+    </if>
+    <if test="logiLisn!=null and logiLisn!=''">
+      AND  logi_lisn LIKE CONCAT(CONCAT('%',#{logiLisn,jdbcType=VARCHAR},'%'))
+    </if>
+    <if test="vin!=null and vin!=''">
+      AND  vin = #{vin,jdbcType=VARCHAR}
+    </if>
+    <if test="chassisNo!=null and chassisNo!=''">
+      AND  chassis_no = #{chassisNo,jdbcType=VARCHAR}
+    </if>
+    <if test="emsStd!=null">
+      AND emsStd = #{emsStd,jdbcType=INTEGER}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from veh_tractor
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from veh_tractor
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="cc.aisc.logistics.model.vehicle.Tractor" >
+    <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into veh_tractor (plate_no, manufacturer, veh_brand, 
+      veh_model, `power`, `style`, 
+      vin, drv_lisn, logi_lisn, 
+      isrn_dtl_id, prdt_date, pucs_date, 
+      lisn_date, chassis_no, ems_std, 
+      veh_length, veh_width, veh_height, 
+      remark, belong_comid)
+    values (#{plateNo,jdbcType=VARCHAR}, #{manufacturer,jdbcType=VARCHAR}, #{vehBrand,jdbcType=VARCHAR}, 
+      #{vehModel,jdbcType=VARCHAR}, #{power,jdbcType=SMALLINT}, #{style,jdbcType=VARCHAR}, 
+      #{vin,jdbcType=VARCHAR}, #{drvLisn,jdbcType=VARCHAR}, #{logiLisn,jdbcType=VARCHAR}, 
+      #{isrnDtlId,jdbcType=BIGINT}, #{prdtDate,jdbcType=TIMESTAMP}, #{pucsDate,jdbcType=TIMESTAMP}, 
+      #{lisnDate,jdbcType=CHAR}, #{chassisNo,jdbcType=VARCHAR}, #{emsStd,typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler},
+      #{vehLength,jdbcType=SMALLINT}, #{vehWidth,jdbcType=SMALLINT}, #{vehHeight,jdbcType=SMALLINT}, 
+      #{remark,jdbcType=VARCHAR}, #{belongComid,jdbcType=BIGINT})
+  </insert>
+  <insert id="insertSelective" parameterType="cc.aisc.logistics.model.vehicle.Tractor" >
+    <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into veh_tractor
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="plateNo != null" >
+        plate_no,
+      </if>
+      <if test="manufacturer != null" >
+        manufacturer,
+      </if>
+      <if test="vehBrand != null" >
+        veh_brand,
+      </if>
+      <if test="vehModel != null" >
+        veh_model,
+      </if>
+      <if test="power != null" >
+        `power`,
+      </if>
+      <if test="style != null" >
+        `style`,
+      </if>
+      <if test="vin != null" >
+        vin,
+      </if>
+      <if test="drvLisn != null" >
+        drv_lisn,
+      </if>
+      <if test="logiLisn != null" >
+        logi_lisn,
+      </if>
+      <if test="isrnDtlId != null" >
+        isrn_dtl_id,
+      </if>
+      <if test="prdtDate != null" >
+        prdt_date,
+      </if>
+      <if test="pucsDate != null" >
+        pucs_date,
+      </if>
+      <if test="lisnDate != null" >
+        lisn_date,
+      </if>
+      <if test="chassisNo != null" >
+        chassis_no,
+      </if>
+      <if test="emsStd != null" >
+        ems_std,
+      </if>
+      <if test="vehLength != null" >
+        veh_length,
+      </if>
+      <if test="vehWidth != null" >
+        veh_width,
+      </if>
+      <if test="vehHeight != null" >
+        veh_height,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+      <if test="belongComid != null" >
+        belong_comid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="plateNo != null" >
+        #{plateNo,jdbcType=VARCHAR},
+      </if>
+      <if test="manufacturer != null" >
+        #{manufacturer,jdbcType=VARCHAR},
+      </if>
+      <if test="vehBrand != null" >
+        #{vehBrand,jdbcType=VARCHAR},
+      </if>
+      <if test="vehModel != null" >
+        #{vehModel,jdbcType=VARCHAR},
+      </if>
+      <if test="power != null" >
+        #{power,jdbcType=SMALLINT},
+      </if>
+      <if test="style != null" >
+        #{style,jdbcType=VARCHAR},
+      </if>
+      <if test="vin != null" >
+        #{vin,jdbcType=VARCHAR},
+      </if>
+      <if test="drvLisn != null" >
+        #{drvLisn,jdbcType=VARCHAR},
+      </if>
+      <if test="logiLisn != null" >
+        #{logiLisn,jdbcType=VARCHAR},
+      </if>
+      <if test="isrnDtlId != null" >
+        #{isrnDtlId,jdbcType=BIGINT},
+      </if>
+      <if test="prdtDate != null" >
+        #{prdtDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="pucsDate != null" >
+        #{pucsDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lisnDate != null" >
+        #{lisnDate,jdbcType=CHAR},
+      </if>
+      <if test="chassisNo != null" >
+        #{chassisNo,jdbcType=VARCHAR},
+      </if>
+      <if test="emsStd != null" >
+        #{emsStd,typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler},
+      </if>
+      <if test="vehLength != null" >
+        #{vehLength,jdbcType=SMALLINT},
+      </if>
+      <if test="vehWidth != null" >
+        #{vehWidth,jdbcType=SMALLINT},
+      </if>
+      <if test="vehHeight != null" >
+        #{vehHeight,jdbcType=SMALLINT},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="belongComid != null" >
+        #{belongComid,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cc.aisc.logistics.model.vehicle.Tractor" >
+    update veh_tractor
+    <set >
+      <if test="plateNo != null" >
+        plate_no = #{plateNo,jdbcType=VARCHAR},
+      </if>
+      <if test="manufacturer != null" >
+        manufacturer = #{manufacturer,jdbcType=VARCHAR},
+      </if>
+      <if test="vehBrand != null" >
+        veh_brand = #{vehBrand,jdbcType=VARCHAR},
+      </if>
+      <if test="vehModel != null" >
+        veh_model = #{vehModel,jdbcType=VARCHAR},
+      </if>
+      <if test="power != null" >
+        `power` = #{power,jdbcType=SMALLINT},
+      </if>
+      <if test="style != null" >
+        `style` = #{style,jdbcType=VARCHAR},
+      </if>
+      <if test="vin != null" >
+        vin = #{vin,jdbcType=VARCHAR},
+      </if>
+      <if test="drvLisn != null" >
+        drv_lisn = #{drvLisn,jdbcType=VARCHAR},
+      </if>
+      <if test="logiLisn != null" >
+        logi_lisn = #{logiLisn,jdbcType=VARCHAR},
+      </if>
+      <if test="isrnDtlId != null" >
+        isrn_dtl_id = #{isrnDtlId,jdbcType=BIGINT},
+      </if>
+      <if test="prdtDate != null" >
+        prdt_date = #{prdtDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="pucsDate != null" >
+        pucs_date = #{pucsDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lisnDate != null" >
+        lisn_date = #{lisnDate,jdbcType=CHAR},
+      </if>
+      <if test="chassisNo != null" >
+        chassis_no = #{chassisNo,jdbcType=VARCHAR},
+      </if>
+      <if test="emsStd != null" >
+        ems_std = #{emsStd,typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler},
+      </if>
+      <if test="vehLength != null" >
+        veh_length = #{vehLength,jdbcType=SMALLINT},
+      </if>
+      <if test="vehWidth != null" >
+        veh_width = #{vehWidth,jdbcType=SMALLINT},
+      </if>
+      <if test="vehHeight != null" >
+        veh_height = #{vehHeight,jdbcType=SMALLINT},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="belongComid != null" >
+        belong_comid = #{belongComid,jdbcType=BIGINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cc.aisc.logistics.model.vehicle.Tractor" >
+    update veh_tractor
+    set plate_no = #{plateNo,jdbcType=VARCHAR},
+      manufacturer = #{manufacturer,jdbcType=VARCHAR},
+      veh_brand = #{vehBrand,jdbcType=VARCHAR},
+      veh_model = #{vehModel,jdbcType=VARCHAR},
+      `power` = #{power,jdbcType=SMALLINT},
+      `style` = #{style,jdbcType=VARCHAR},
+      vin = #{vin,jdbcType=VARCHAR},
+      drv_lisn = #{drvLisn,jdbcType=VARCHAR},
+      logi_lisn = #{logiLisn,jdbcType=VARCHAR},
+      isrn_dtl_id = #{isrnDtlId,jdbcType=BIGINT},
+      prdt_date = #{prdtDate,jdbcType=TIMESTAMP},
+      pucs_date = #{pucsDate,jdbcType=TIMESTAMP},
+      lisn_date = #{lisnDate,jdbcType=CHAR},
+      chassis_no = #{chassisNo,jdbcType=VARCHAR},
+      ems_std = #{emsStd,typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler},
+      veh_length = #{vehLength,jdbcType=SMALLINT},
+      veh_width = #{vehWidth,jdbcType=SMALLINT},
+      veh_height = #{vehHeight,jdbcType=SMALLINT},
+      remark = #{remark,jdbcType=VARCHAR},
+      belong_comid = #{belongComid,jdbcType=BIGINT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>
