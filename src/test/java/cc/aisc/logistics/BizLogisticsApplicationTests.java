@@ -1,14 +1,11 @@
 package cc.aisc.logistics;
 
 import cc.aisc.BizLogisticsApplication;
-import cc.aisc.logistics.model.vehicle.Driver;
-import cc.aisc.logistics.model.vehicle.Tractor;
-import cc.aisc.logistics.model.vehicle.Trailer;
-import cc.aisc.logistics.model.vehicle.Truck;
-import cc.aisc.logistics.model.vehicle.type.DriverStatus;
-import cc.aisc.logistics.model.vehicle.type.LicenseType;
-import cc.aisc.logistics.model.vehicle.type.TrailerType;
-import cc.aisc.logistics.model.vehicle.type.VehicleStatus;
+import cc.aisc.logistics.model.veh.Driver;
+import cc.aisc.logistics.model.veh.Tractor;
+import cc.aisc.logistics.model.veh.Trailer;
+import cc.aisc.logistics.model.veh.Truck;
+import cc.aisc.logistics.model.veh.type.*;
 import cc.aisc.logistics.service.vehicle.DriverService;
 import cc.aisc.logistics.service.vehicle.TractorService;
 import cc.aisc.logistics.service.vehicle.TrailerService;
@@ -45,7 +42,6 @@ public class BizLogisticsApplicationTests {
 		driver1.setName("金lao er");
 		driver1.setMobile("1234567890");
 		driver1.setStatus(DriverStatus.SERVING);
-		driver1.setBelongComid(0L);
 		driver1.setPersonId(0L);
 		driverService.insert(driver1);
 		System.out.println(driver.toString());
@@ -70,7 +66,7 @@ public class BizLogisticsApplicationTests {
 		t3.setItnlSn("200088");
 		t3.setTractor(t1);
 		t3.setTrailer(t2);
-		t3.setStatus(VehicleStatus.MAINTENANCE);
+		t3.setStatus(TransportStatus.ON_STAND_BY);
 		truckService.insert(t3);
 		System.out.println(t1.getId());
 	}

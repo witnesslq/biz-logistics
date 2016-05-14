@@ -1,11 +1,11 @@
-package cc.aisc.logistics.model.vehicle;
+package cc.aisc.logistics.model.veh;
 
-import cc.aisc.logistics.model.vehicle.type.VehicleStatus;
+import cc.aisc.logistics.model.veh.type.TransportStatus;
 
 public class Truck {
     private Long id;
 
-    private String itnlSn = "INTLSN-001";
+    private String itnlSn;
 
     private Tractor tractor;
 
@@ -15,13 +15,23 @@ public class Truck {
 
     private Driver codrv;
 
-    private VehicleStatus status = VehicleStatus.ON_STAND_BY;
+    private TransportStatus status;
 
-    private String remark = "";
+    private String remark;
 
-    private String gpsNo = "";
+    private String gpsNo;
+
+    private Boolean available;
 
     public Truck() {
+    }
+
+    public Boolean getAvailable() {
+        return available;
+    }
+
+    public void setAvailable(Boolean available) {
+        this.available = available;
     }
 
     public Long getId() {
@@ -72,11 +82,11 @@ public class Truck {
         this.codrv = codrv;
     }
 
-    public VehicleStatus getStatus() {
+    public TransportStatus getStatus() {
         return status;
     }
 
-    public void setStatus(VehicleStatus status) {
+    public void setStatus(TransportStatus status) {
         this.status = status;
     }
 

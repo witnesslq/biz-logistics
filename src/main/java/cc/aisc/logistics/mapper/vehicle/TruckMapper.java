@@ -1,7 +1,7 @@
 package cc.aisc.logistics.mapper.vehicle;
 
 import cc.aisc.commons.base.BaseMapper;
-import cc.aisc.logistics.model.vehicle.Truck;
+import cc.aisc.logistics.model.veh.Truck;
 
 import java.util.List;
 import java.util.Map;

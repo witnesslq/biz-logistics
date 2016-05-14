@@ -122,7 +122,24 @@
             <property name="enableSubPackages" value="true"/>
         </javaClientGenerator>
 
-        <table tableName="veh_truck" domainObjectName="Truck" enableCountByExample="false"
+
+        <table tableName="wb_detail" domainObjectName="Waybill" enableCountByExample="false"
+               enableUpdateByExample="false" enableDeleteByExample="false"
+               enableSelectByExample="false" selectByExampleQueryId="false">
+            <generatedKey column="id" sqlStatement="Mysql" identity="true" /></table>
+
+        <!--<table tableName="wb_car" domainObjectName="WbCar" enableCountByExample="false"
+               enableUpdateByExample="false" enableDeleteByExample="false"
+               enableSelectByExample="false" selectByExampleQueryId="false">
+            <generatedKey column="id" sqlStatement="Mysql" identity="true" /></table>-->
+
+        <!--<table tableName="sys_category" domainObjectName="Category" enableCountByExample="false"
+               enableUpdateByExample="false" enableDeleteByExample="false"
+               enableSelectByExample="false" selectByExampleQueryId="false">
+            <generatedKey column="id" sqlStatement="Mysql" identity="true" /></table>-->
+
+
+        <!--<table tableName="veh_truck" domainObjectName="Truck" enableCountByExample="false"
                enableUpdateByExample="false" enableDeleteByExample="false"
                enableSelectByExample="false" selectByExampleQueryId="false">
             <generatedKey column="id" sqlStatement="Mysql" identity="true" />
@@ -143,28 +160,10 @@
                enableUpdateByExample="false" enableDeleteByExample="false"
                enableSelectByExample="false" selectByExampleQueryId="false">
             <generatedKey column="id" sqlStatement="Mysql" identity="true" />
-        </table>
+        </table>-->
 
 
-        <!--<table tableName="veh_tractor" domainObjectName="OwnTractor" enableCountByExample="false"
-               enableUpdateByExample="false" enableDeleteByExample="false"
-               enableSelectByExample="false" selectByExampleQueryId="false">
-            <generatedKey column="id" sqlStatement="Mysql" identity="true" /></table>
-
-        <table tableName="veh_trailer" domainObjectName="OwnTrailer" enableCountByExample="false"
-               enableUpdateByExample="false" enableDeleteByExample="false"
-               enableSelectByExample="false" selectByExampleQueryId="false">
-            <generatedKey column="id" sqlStatement="Mysql" identity="true" /></table>
-
-        <table tableName="veh_driver" domainObjectName="OwnDriver" enableCountByExample="false"
-               enableUpdateByExample="false" enableDeleteByExample="false"
-               enableSelectByExample="false" selectByExampleQueryId="false">
-            <generatedKey column="id" sqlStatement="Mysql" identity="true" /></table>
-
-        <table tableName="t_own_truck" domainObjectName="OwnTruck" enableCountByExample="false"
-               enableUpdateByExample="false" enableDeleteByExample="false"
-               enableSelectByExample="false" selectByExampleQueryId="false">
-            <generatedKey column="id" sqlStatement="Mysql" identity="true" /></table>
+        <!--
 
         <table tableName="t_co_supplier" domainObjectName="Supplier" enableCountByExample="false"
                enableUpdateByExample="false" enableDeleteByExample="false"
@@ -208,10 +207,7 @@
                enableSelectByExample="false" selectByExampleQueryId="false">
             <generatedKey column="id" sqlStatement="Mysql" identity="true" /></table>
 
-        <table tableName="t_rt_site" domainObjectName="RouteLocation" enableCountByExample="false"
-               enableUpdateByExample="false" enableDeleteByExample="false"
-               enableSelectByExample="false" selectByExampleQueryId="false">
-            <generatedKey column="id" sqlStatement="Mysql" identity="true" /></table>
+
 
         <table tableName="t_splr_dist" domainObjectName="SupplierPayDistance" enableCountByExample="false"
                enableUpdateByExample="false" enableDeleteByExample="false"

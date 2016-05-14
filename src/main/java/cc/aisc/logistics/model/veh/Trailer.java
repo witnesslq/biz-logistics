@@ -1,7 +1,9 @@
-package cc.aisc.logistics.model.vehicle;
+package cc.aisc.logistics.model.veh;
 
-import cc.aisc.logistics.model.type.Constant;
-import cc.aisc.logistics.model.vehicle.type.TrailerType;
+import cc.aisc.commons.costant.Constant;
+import cc.aisc.logistics.model.corp.Corporation;
+import cc.aisc.logistics.model.veh.type.TrailerType;
+import cc.aisc.logistics.model.veh.type.VehicleStatus;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.Past;
@@ -11,47 +13,57 @@ import java.util.Date;
 public class Trailer {
     private Long id;
     @Length(min = 12, max = 20)
-    private String vin = "VIN-1234567890";
+    private String vin;
     @Length(min = 6, max = 12)
-    private String plateNo = "PLATE-12345";
+    private String plateNo;
     @Length(min = 12, max = 20)
-    private String drvLisn = "DRV_LISN-12345";
+    private String drvLisn;
     @Length(min = 2, max = 20)
-    private String manufacturer = "MANUFACTURER";
+    private String manufacturer;
     @Length(min = 2, max = 20)
-    private String vehBrand = "BRAND";
+    private String vehBrand;
     @Length(min = 2, max = 20)
-    private String vehModel = "MODEL";
+    private String vehModel;
     @Size(min = 0, max = 99)
-    private Integer slotAmt = 8;
+    private Integer slotAmt;
 
-    private TrailerType slotType = TrailerType.SLOT_1;
+    private TrailerType slotType;
 
-    private TrailerType frameType = TrailerType.FRAME_1;
+    private TrailerType frameType;
     @Length(min = 2, max = 20)
-    private String bridge = "BRIDGE";
+    private String bridge;
 
-    private TrailerType tyreType = TrailerType.TYRE_1;
+    private TrailerType tyreType;
 
-    private TrailerType liftType = TrailerType.LIFT_1;
+    private TrailerType liftType;
     @Past
-    private Date mnftrDate = Constant.PAST_DATE;
+    private Date mnftrDate;
     @Past
-    private Date pucsDate = Constant.PAST_DATE;
+    private Date pucsDate;
     @Length(min = 2, max = 4)
-    private String yearInuse = "2010";
+    private String yearInuse;
     @Size(min = 100, max = 99999)
-    private Short vehLenght = 10000;
+    private Short vehLenght;
     @Size(min = 100, max = 99999)
-    private Short vehWidth = 2800;
+    private Short vehWidth;
     @Size(min = 100, max = 99999)
-    private Short vehHeight = 2800;
+    private Short vehHeight;
     @Length(min = 0, max = 1000)
-    private String remark = "";
+    private String remark;
 
-    private Long belongComid = 0L;
+    private Corporation corp;
+
+    private VehicleStatus status = VehicleStatus.SERVING;
 
     public Trailer() {
+    }
+
+    public VehicleStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(VehicleStatus status) {
+        this.status = status;
     }
 
     public Long getId() {
@@ -214,11 +226,11 @@ public class Trailer {
         this.remark = remark == null ? null : remark.trim();
     }
 
-    public Long getBelongComid() {
-        return belongComid;
+    public Corporation getCorp() {
+        return corp;
     }
 
-    public void setBelongComid(Long belongComid) {
-        this.belongComid = belongComid;
+    public void setCorp(Corporation corp) {
+        this.corp = corp;
     }
 }

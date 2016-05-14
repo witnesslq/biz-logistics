@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="cc.aisc.logistics.mapper.vehicle.TrailerMapper" >
-  <resultMap id="BaseResultMap" type="cc.aisc.logistics.model.vehicle.Trailer" >
+  <resultMap id="BaseResultMap" type="cc.aisc.logistics.model.veh.Trailer" >
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="vin" property="vin" jdbcType="VARCHAR" />
     <result column="plate_no" property="plateNo" jdbcType="VARCHAR" />
@@ -22,19 +22,20 @@
     <result column="veh_width" property="vehWidth" jdbcType="SMALLINT" />
     <result column="veh_height" property="vehHeight" jdbcType="SMALLINT" />
     <result column="remark" property="remark" jdbcType="VARCHAR" />
-    <result column="belong_comid" property="belongComid" jdbcType="BIGINT" />
+    <result column="belong_comid" property="corp.id" jdbcType="BIGINT" />
+    <result column="status" property="status" typeHandler="org.apache.ibatis.type.EnumOrdinalTypeHandler"/>
   </resultMap>
   <sql id="Base_Column_List" >
     id, vin, plate_no, drv_lisn, manufacturer, veh_brand, veh_model, slot_amt, slot_type, 
     frame_type, bridge, tyre_type, lift_type, mnftr_date, pucs_date, year_inuse, veh_lenght, 
-    veh_width, veh_height, remark, belong_comid
+    veh_width, veh_height, remark, belong_comid, status
   </sql>
-  <select id="selectByMultiConditioned" parameterType="cc.aisc.logistics.model.vehicle.Trailer" resultMap="BaseResultMap">
+  <select id="selectByMultiConditioned" parameterType="cc.aisc.logistics.model.veh.Trailer" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
     from veh_trailer
     where 1 = 1
-    <if test="plateNo!=null and palteNo!=''">
+    <if test="plateNo!=null and plateNo!=''">
       AND  plate_no LIKE CONCAT(CONCAT('%',#{plateNo,jdbcType=VARCHAR},'%'))
     </if>
     <if test="manufacturer!=null and manufacturer!=''">
@@ -53,16 +54,19 @@
       AND  vin = #{vin,jdbcType=VARCHAR}
     </if>
     <if test="slotType!=null">
-      AND slot_type = #{slotType,jdbcType=INTEGER}
+      AND slot_type = #{slotType,jdbcType=INTEGER,typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler}
     </if>
     <if test="frameType!=null">
-      AND frame_type = #{frameType,jdbcType=INTEGER}
+      AND frame_type = #{frameType,jdbcType=INTEGER,typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler}
     </if>
     <if test="tyreType!=null">
-      AND tyre_type = #{tyreType,jdbcType=INTEGER}
+      AND tyre_type = #{tyreType,jdbcType=INTEGER,typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler}
     </if>
     <if test="liftType!=null">
-      AND lift_type = #{liftType,jdbcType=INTEGER}
+      AND lift_type = #{liftType,jdbcType=INTEGER,typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler}
+    </if>
+    <if test="status!=null">
+      AND status = #{status,typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler}
     </if>
   </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
@@ -75,7 +79,7 @@
     delete from veh_trailer
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" parameterType="cc.aisc.logistics.model.vehicle.Trailer" >
+  <insert id="insert" parameterType="cc.aisc.logistics.model.veh.Trailer" >
     <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
       SELECT LAST_INSERT_ID()
     </selectKey>
@@ -85,16 +89,16 @@
       bridge, tyre_type, lift_type, 
       mnftr_date, pucs_date, year_inuse, 
       veh_lenght, veh_width, veh_height, 
-      remark, belong_comid)
+      remark, belong_comid, status)
     values (#{vin,jdbcType=VARCHAR}, #{plateNo,jdbcType=VARCHAR}, #{drvLisn,jdbcType=VARCHAR}, 
       #{manufacturer,jdbcType=VARCHAR}, #{vehBrand,jdbcType=VARCHAR}, #{vehModel,jdbcType=VARCHAR}, 
       #{slotAmt,jdbcType=INTEGER}, #{slotType,typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler}, #{frameType,typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler},
       #{bridge,jdbcType=VARCHAR}, #{tyreType,typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler}, #{liftType,typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler},
       #{mnftrDate,jdbcType=TIMESTAMP}, #{pucsDate,jdbcType=TIMESTAMP}, #{yearInuse,jdbcType=CHAR},
       #{vehLenght,jdbcType=SMALLINT}, #{vehWidth,jdbcType=SMALLINT}, #{vehHeight,jdbcType=SMALLINT}, 
-      #{remark,jdbcType=VARCHAR}, #{belongComid,jdbcType=BIGINT})
+      #{remark,jdbcType=VARCHAR}, #{corp.id,jdbcType=BIGINT}, #{status,typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler})
   </insert>
-  <insert id="insertSelective" parameterType="cc.aisc.logistics.model.vehicle.Trailer" >
+  <insert id="insertSelective" parameterType="cc.aisc.logistics.model.veh.Trailer" >
     <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
       SELECT LAST_INSERT_ID()
     </selectKey>
@@ -157,8 +161,11 @@
       <if test="remark != null" >
         remark,
       </if>
-      <if test="belongComid != null" >
+      <if test="corp != null" >
         belong_comid,
+      </if>
+      <if test="status != null">
+        status,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -219,12 +226,15 @@
       <if test="remark != null" >
         #{remark,jdbcType=VARCHAR},
       </if>
-      <if test="belongComid != null" >
-        #{belongComid,jdbcType=BIGINT},
+      <if test="corp != null" >
+        #{corp.id,jdbcType=BIGINT},
+      </if>
+      <if test="status != null">
+        #{status,typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler},
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="cc.aisc.logistics.model.vehicle.Trailer" >
+  <update id="updateByPrimaryKeySelective" parameterType="cc.aisc.logistics.model.veh.Trailer" >
     update veh_trailer
     <set >
       <if test="vin != null" >
@@ -284,13 +294,16 @@
       <if test="remark != null" >
         remark = #{remark,jdbcType=VARCHAR},
       </if>
-      <if test="belongComid != null" >
-        belong_comid = #{belongComid,jdbcType=BIGINT},
+      <if test="corp != null" >
+        belong_comid = #{corp.id,jdbcType=BIGINT},
+      </if>
+      <if test="status != null">
+        status = #{status,typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler},
       </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="cc.aisc.logistics.model.vehicle.Trailer" >
+  <update id="updateByPrimaryKey" parameterType="cc.aisc.logistics.model.veh.Trailer" >
     update veh_trailer
     set vin = #{vin,jdbcType=VARCHAR},
       plate_no = #{plateNo,jdbcType=VARCHAR},
@@ -311,7 +324,8 @@
       veh_width = #{vehWidth,jdbcType=SMALLINT},
       veh_height = #{vehHeight,jdbcType=SMALLINT},
       remark = #{remark,jdbcType=VARCHAR},
-      belong_comid = #{belongComid,jdbcType=BIGINT}
+      belong_comid = #{corp.id,jdbcType=BIGINT},
+       status = #{status,typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler},
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

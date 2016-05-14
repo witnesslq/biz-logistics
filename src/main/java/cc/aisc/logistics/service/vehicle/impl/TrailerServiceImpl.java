@@ -2,7 +2,8 @@ package cc.aisc.logistics.service.vehicle.impl;
 
 import cc.aisc.commons.base.AbstractService;
 import cc.aisc.logistics.mapper.vehicle.TrailerMapper;
-import cc.aisc.logistics.model.vehicle.Trailer;
+import cc.aisc.logistics.model.veh.Trailer;
+import cc.aisc.logistics.model.veh.type.VehicleStatus;
 import cc.aisc.logistics.service.vehicle.TrailerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,5 +25,12 @@ public class TrailerServiceImpl extends AbstractService<Trailer, Long> implement
     @Override
     public Optional<List<Trailer>> findByConditions(Trailer con) {
         return Optional.ofNullable(trailerMapper.selectByMultiConditioned(con));
+    }
+
+    @Override
+    public boolean changeStatus(Long id, VehicleStatus status) {
+        Trailer record = trailerMapper.selectByPrimaryKey(id);
+        record.setStatus(status);
+        return trailerMapper.updateByPrimaryKeySelective(record) > 0;
     }
 }

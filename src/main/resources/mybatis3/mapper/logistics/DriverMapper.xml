@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="cc.aisc.logistics.mapper.vehicle.DriverMapper" >
-  <resultMap id="BaseResultMap" type="cc.aisc.logistics.model.vehicle.Driver" >
+  <resultMap id="BaseResultMap" type="cc.aisc.logistics.model.veh.Driver" >
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="name" property="name" jdbcType="VARCHAR" />
     <result column="license" property="license" jdbcType="VARCHAR" />
@@ -9,12 +9,12 @@
     <result column="mobile" property="mobile" jdbcType="VARCHAR" />
     <result column="status" property="status" typeHandler="org.apache.ibatis.type.EnumOrdinalTypeHandler" />
     <result column="person_id" property="personId" jdbcType="BIGINT" />
-    <result column="belong_comid" property="belongComid" jdbcType="BIGINT" />
+    <result column="belong_comid" property="corp.id" jdbcType="BIGINT" />
   </resultMap>
   <sql id="Base_Column_List" >
     id, `name`, license, lisn_type, mobile, `status`, person_id, belong_comid
   </sql>
-  <select id="selectByMultiConditioned" parameterType="cc.aisc.logistics.model.vehicle.Driver" resultMap="BaseResultMap">
+  <select id="selectByMultiConditioned" parameterType="cc.aisc.logistics.model.veh.Driver" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
     from veh_driver
@@ -26,13 +26,13 @@
       AND license LIKE CONCAT(CONCAT('%',#{license,jdbcType=VARCHAR},'%'))
     </if>
     <if test="lisnType!=null">
-      AND lisn_type = #{lisn_type,jdbcType=INTEGER}
+      AND lisn_type = #{lisnType,jdbcType=INTEGER,typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler}
     </if>
     <if test="mobile!=null and mobile!=''">
       AND mobile LIKE CONCAT(CONCAT('%',#{mobile,jdbcType=VARCHAR},'%'))
     </if>
     <if test="status!=null">
-      AND status = #{status,jdbcType=INTEGER}
+      AND status = #{status,jdbcType=INTEGER,typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler}
     </if>
   </select>
   <select id="selectAll" resultMap="BaseResultMap">
@@ -50,7 +50,7 @@
     delete from veh_driver
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" parameterType="cc.aisc.logistics.model.vehicle.Driver" >
+  <insert id="insert" parameterType="cc.aisc.logistics.model.veh.Driver" >
     <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
       SELECT LAST_INSERT_ID()
     </selectKey>
@@ -59,9 +59,9 @@
       belong_comid)
     values (#{name,jdbcType=VARCHAR}, #{license,jdbcType=VARCHAR}, #{lisnType,typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler},
       #{mobile,jdbcType=VARCHAR}, #{status,typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler}, #{personId,jdbcType=BIGINT},
-      #{belongComid,jdbcType=BIGINT})
+      #{corp.id,jdbcType=BIGINT})
   </insert>
-  <insert id="insertSelective" parameterType="cc.aisc.logistics.model.vehicle.Driver" >
+  <insert id="insertSelective" parameterType="cc.aisc.logistics.model.veh.Driver" >
     <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
       SELECT LAST_INSERT_ID()
     </selectKey>
@@ -85,7 +85,7 @@
       <if test="personId != null" >
         person_id,
       </if>
-      <if test="belongComid != null" >
+      <if test="corp != null" >
         belong_comid,
       </if>
     </trim>
@@ -108,12 +108,12 @@
       <if test="personId != null" >
         #{personId,jdbcType=BIGINT},
       </if>
-      <if test="belongComid != null" >
-        #{belongComid,jdbcType=BIGINT},
+      <if test="corp != null" >
+        #{corp.id,jdbcType=BIGINT},
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="cc.aisc.logistics.model.vehicle.Driver" >
+  <update id="updateByPrimaryKeySelective" parameterType="cc.aisc.logistics.model.veh.Driver" >
     update veh_driver
     <set >
       <if test="name != null" >
@@ -134,13 +134,13 @@
       <if test="personId != null" >
         person_id = #{personId,jdbcType=BIGINT},
       </if>
-      <if test="belongComid != null" >
-        belong_comid = #{belongComid,jdbcType=BIGINT},
+      <if test="corp != null" >
+        belong_comid = #{corp.id,jdbcType=BIGINT},
       </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="cc.aisc.logistics.model.vehicle.Driver" >
+  <update id="updateByPrimaryKey" parameterType="cc.aisc.logistics.model.veh.Driver" >
     update veh_driver
     set `name` = #{name,jdbcType=VARCHAR},
       license = #{license,jdbcType=VARCHAR},
@@ -148,7 +148,7 @@
       mobile = #{mobile,jdbcType=VARCHAR},
       `status` = #{status,typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler},
       person_id = #{personId,jdbcType=BIGINT},
-      belong_comid = #{belongComid,jdbcType=BIGINT}
+      belong_comid = #{corp.id,jdbcType=BIGINT}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

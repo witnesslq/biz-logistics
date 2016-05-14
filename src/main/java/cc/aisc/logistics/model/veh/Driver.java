@@ -1,7 +1,8 @@
-package cc.aisc.logistics.model.vehicle;
+package cc.aisc.logistics.model.veh;
 
-import cc.aisc.logistics.model.vehicle.type.LicenseType;
-import cc.aisc.logistics.model.vehicle.type.DriverStatus;
+import cc.aisc.logistics.model.corp.Corporation;
+import cc.aisc.logistics.model.veh.type.LicenseType;
+import cc.aisc.logistics.model.veh.type.DriverStatus;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 
@@ -10,23 +11,23 @@ public class Driver {
 
     @NotBlank
     @Length(min = 2, max = 12)
-    private String name = "NOBODY";
+    private String name;
 
     @NotBlank
     @Length(min = 12, max = 20)
-    private String license = "LICENSE-NO";
+    private String license;
 
-    private LicenseType lisnType = LicenseType.A2;
+    private LicenseType lisnType;
 
     @Length(min = 10, max = 16)
-    private String mobile = "MOBILE-NO1";
+    private String mobile;
 
 
-    private DriverStatus status = DriverStatus.SERVING;
+    private DriverStatus status;
 
-    private Long personId = 0L;
+    private Long personId;
 
-    private Long belongComid = 0L;
+    private Corporation corp;
 
     public Driver() {
     }
@@ -87,11 +88,11 @@ public class Driver {
         this.personId = personId;
     }
 
-    public Long getBelongComid() {
-        return belongComid;
+    public Corporation getCorp() {
+        return corp;
     }
 
-    public void setBelongComid(Long belongComid) {
-        this.belongComid = belongComid;
+    public void setCorp(Corporation corp) {
+        this.corp = corp;
     }
 }

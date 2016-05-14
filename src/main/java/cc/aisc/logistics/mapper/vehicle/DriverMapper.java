@@ -1,7 +1,7 @@
 package cc.aisc.logistics.mapper.vehicle;
 
 import cc.aisc.commons.base.BaseMapper;
-import cc.aisc.logistics.model.vehicle.Driver;
+import cc.aisc.logistics.model.veh.Driver;
 
 import java.util.List;
 

@@ -2,7 +2,8 @@ package cc.aisc.logistics.service.vehicle.impl;
 
 import cc.aisc.commons.base.AbstractService;
 import cc.aisc.logistics.mapper.vehicle.DriverMapper;
-import cc.aisc.logistics.model.vehicle.Driver;
+import cc.aisc.logistics.model.veh.Driver;
+import cc.aisc.logistics.model.veh.type.DriverStatus;
 import cc.aisc.logistics.service.vehicle.DriverService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,5 +25,12 @@ public class DriverServiceImpl extends AbstractService<Driver, Long> implements 
     @Override
     public Optional<List<Driver>> findByConditions(Driver mc) {
         return Optional.ofNullable(driverMapper.selectByMultiConditioned(mc));
+    }
+
+    @Override
+    public boolean changeStatus(Long id, DriverStatus status) {
+        Driver record = driverMapper.selectByPrimaryKey(id);
+        record.setStatus(status);
+        return driverMapper.updateByPrimaryKeySelective(record) > 0;
     }
 }
