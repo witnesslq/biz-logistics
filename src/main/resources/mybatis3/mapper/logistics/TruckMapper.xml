@@ -1,50 +1,51 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="cc.aisc.logistics.mapper.vehicle.TruckMapper" >
-  <resultMap id="BaseResultMap" type="cc.aisc.logistics.model.veh.Truck" >
+<mapper namespace="cc.aisc.logistics.mapper.veh.TruckMapper" >
+  <resultMap id="ValidResultMap"   type="cc.aisc.logistics.model.veh.Truck" >
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="itnl_sn" property="itnlSn" jdbcType="VARCHAR" />
-    <result column="tractor_id" property="tractor.id" jdbcType="BIGINT" />
-    <result column="trailer_id" property="trailer.id" jdbcType="BIGINT" />
-    <result column="driver_id" property="driver.id" jdbcType="BIGINT" />
-    <result column="codrv_id" property="codrv.id" jdbcType="BIGINT" />
+    <association column="tractor_id" property="tractor" select="selectAssocTractor" />
+    <association column="trailer_id" property="trailer" select="selectAssocTrailer" />
+    <association column="driver_id" property="driver" select="selectAssocDriver" />
+    <association column="codrv_id" property="codrv" select="selectAssocDriver" />
+  </resultMap>
+  <resultMap id="BaseResultMap" type="cc.aisc.logistics.model.veh.Truck" extends="ValidResultMap">
     <result column="status" property="status" typeHandler="org.apache.ibatis.type.EnumOrdinalTypeHandler" />
     <result column="remark" property="remark" jdbcType="VARCHAR" />
     <result column="gps_no" property="gpsNo" jdbcType="VARCHAR" />
     <result column="available" property="available" jdbcType="BIT"/>
   </resultMap>
-  <resultMap id="ValidResultMap"   type="HashMap" >
-    <id column="id" property="id" jdbcType="BIGINT" />
-    <result column="itnl_sn" property="itnlSn" jdbcType="VARCHAR" />
-    <result column="tractor_plate" property="tractorPlate" jdbcType="VARCHAR" />
-    <result column="trailer_plate" property="trailerPlate" jdbcType="VARCHAR" />
-    <result column="driver_name" property="driverName" jdbcType="VARCHAR" />
-    <result column="codrv_name" property="codrvName" jdbcType="VARCHAR" />
-  </resultMap>
   <sql id="Base_Column_List" >
     id, itnl_sn, tractor_id, trailer_id, driver_id, codrv_id, `status`, remark, gps_no, available
   </sql>
-  <select id="selectByNestedInfo" parameterType="Map" resultMap="ValidResultMap">
-    select t.id as id, t.itnl_sn as itnl_sn, t1.plate_no as tractor_plate, t2.plate_no as trailer_plate, t3.name as driver_name, t4.name as codrv_name
-    from veh_truck t
-    JOIN veh_tractor t1 on t.tractor_id=t1.id
-    JOIN veh_trailer  t2 on t.trailer_id=t2.id
-    JOIN veh_driver t3 on t.driver_id=t3.id
-    JOIN veh_driver t4 on t.codrv_id=t4.id
-    WHERE t.available = 1
-    <if test="itnlSn!=null and itnlSn!=''">
-      AND itnl_sn LIKE CONCAT(CONCAT('%',#{itnlSn,jdbcType=VARCHAR},'%'))
-    </if>
-    <if test="tractorPlate!=null and tractorPalte!=''">
-      AND t1.plate_no LIKE CONCAT(CONCAT('%',#{tractorPlate,jdbcType=VARCHAR},'%'))
-    </if>
-    <if test="trailerPlate!=null and trailerPalte!=''">
-      AND t2.palte_no LIKE CONCAT(CONCAT('%',#{trailerPlate,jdbcType=VARCHAR},'%'))
-    </if>
-    <if test="driverName!=null and driverName!=''">
-      AND (t3.name LIKE CONCAT(CONCAT('%',#{driverName,jdbcType=VARCHAR},'%'))
-      OR t4.name LIKE CONCAT(CONCAT('%',#{driverName,jdbcType=VARCHAR},'%')))
-    </if>
+  <sql id="Valid_Column_List" >
+    id, itnl_sn, tractor_id, trailer_id, driver_id, codrv_id
+  </sql>
+  <select id="selectAssocTractor" parameterType="java.lang.Long" resultType="cc.aisc.logistics.model.veh.Tractor">
+    SELECT id, plate_no
+    FROM veh_tractor
+    WHERE id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectAssocTrailer" parameterType="java.lang.Long" resultType="cc.aisc.logistics.model.veh.Trailer">
+    SELECT id, plate_no
+    FROM veh_trailer
+    WHERE id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectAssocDriver" parameterType="java.lang.Long" resultType="cc.aisc.logistics.model.veh.Driver">
+    SELECT id, `name`
+    FROM veh_driver
+    WHERE id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectBySelective" parameterType="java.lang.String" resultMap="ValidResultMap">
+    select
+    <include refid="Valid_Column_List" />
+    from veh_truck
+    where available = 1
+      AND  itnl_sn LIKE CONCAT(CONCAT('%',#{param,jdbcType=VARCHAR},'%'))
+<!--      OR tractor.palte_no LIKE CONCAT(CONCAT('%',#{param,jdbcType=VARCHAR},'%'))
+      OR trailer.palte_no LIKE CONCAT(CONCAT('%',#{param,jdbcType=VARCHAR},'%'))
+      OR driver.name LIKE CONCAT(CONCAT('%',#{param,jdbcType=VARCHAR},'%'))
+      OR codrv.name LIKE CONCAT(CONCAT('%',#{param,jdbcType=VARCHAR},'%'))-->
   </select>
   <select id="selectByMultiConditioned" parameterType="cc.aisc.logistics.model.veh.Truck" resultMap="BaseResultMap">
     select

@@ -1,11 +1,12 @@
 package cc.aisc.logistics.model.veh;
 
-import cc.aisc.commons.costant.Constant;
 import cc.aisc.logistics.model.corp.Corporation;
 import cc.aisc.logistics.model.veh.type.EmsStdType;
 import cc.aisc.logistics.model.veh.type.VehicleStatus;
 import org.hibernate.validator.constraints.Length;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.Size;
 import java.util.Date;
@@ -22,7 +23,8 @@ public class Tractor {
     private String vehBrand;
     @Length(min = 2, max = 20)
     private String vehModel;
-    @Size(min = 1, max = 999)
+    @Min(1)
+    @Max(999)
     private Short power;
 
     private String style;
@@ -54,11 +56,14 @@ public class Tractor {
 
     private EmsStdType emsStd;
 
-    @Size(min = 100, max = 99999)
+    @Min(100)
+    @Max(99999)
     private Short vehLength;
-    @Size(min = 100, max = 99999)
+    @Min(100)
+    @Max(99999)
     private Short vehWidth;
-    @Size(min = 100, max = 99999)
+    @Min(100)
+    @Max(99999)
     private Short vehHeight;
 
     @Length(min = 0, max = 1000)

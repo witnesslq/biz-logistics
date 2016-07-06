@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="cc.aisc.logistics.mapper.vehicle.TrailerMapper" >
+<mapper namespace="cc.aisc.logistics.mapper.veh.TrailerMapper" >
   <resultMap id="BaseResultMap" type="cc.aisc.logistics.model.veh.Trailer" >
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="vin" property="vin" jdbcType="VARCHAR" />
@@ -30,11 +30,20 @@
     frame_type, bridge, tyre_type, lift_type, mnftr_date, pucs_date, year_inuse, veh_lenght, 
     veh_width, veh_height, remark, belong_comid, status
   </sql>
+  <select id="selectBySelective" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from veh_trailer
+    where status != 5
+    <if test="str!=null and str!=''">
+      AND  plate_no LIKE CONCAT(CONCAT('%',#{plateNo,jdbcType=VARCHAR},'%'))
+    </if>
+  </select>
   <select id="selectByMultiConditioned" parameterType="cc.aisc.logistics.model.veh.Trailer" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
     from veh_trailer
-    where 1 = 1
+    where status != 5
     <if test="plateNo!=null and plateNo!=''">
       AND  plate_no LIKE CONCAT(CONCAT('%',#{plateNo,jdbcType=VARCHAR},'%'))
     </if>
@@ -65,8 +74,8 @@
     <if test="liftType!=null">
       AND lift_type = #{liftType,jdbcType=INTEGER,typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler}
     </if>
-    <if test="status!=null">
-      AND status = #{status,typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler}
+    <if test="status!=null and status!='DELETED'">
+      AND status = #{status,jdbcType=INTEGER,typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler}
     </if>
   </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >

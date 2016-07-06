@@ -10,5 +10,4 @@ import java.util.Optional;
  * Created by sjf on 16-5-14.
  */
 public interface WaybillService extends BaseService<Waybill, Long> {
-    Optional<List<Waybill>> findByConditions(Waybill con);
 }

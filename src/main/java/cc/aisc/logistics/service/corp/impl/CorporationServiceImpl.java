@@ -1,7 +1,7 @@
 package cc.aisc.logistics.service.corp.impl;
 
 import cc.aisc.commons.base.AbstractService;
-import cc.aisc.logistics.mapper.CorporationMapper;
+import cc.aisc.logistics.mapper.corp.CorporationMapper;
 import cc.aisc.logistics.model.corp.Corporation;
 import cc.aisc.logistics.service.corp.CorporationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,9 +20,4 @@ public class CorporationServiceImpl extends AbstractService<Corporation, Long> i
 
     @Autowired
     private CorporationMapper corporationMapper;
-
-    @Override
-    public Optional<List<Corporation>> findByConditions(Corporation con) {
-        return Optional.ofNullable(corporationMapper.selectByMultiConditioned(con));
-    }
 }

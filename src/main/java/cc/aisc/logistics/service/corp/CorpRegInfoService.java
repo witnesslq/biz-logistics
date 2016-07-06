@@ -10,5 +10,4 @@ import java.util.Optional;
  * Created by sjf on 16-5-14.
  */
 public interface CorpRegInfoService extends BaseService<CorpRegInfo, Long> {
-    Optional<List<CorpRegInfo>> findByConditions(CorpRegInfo con);
 }

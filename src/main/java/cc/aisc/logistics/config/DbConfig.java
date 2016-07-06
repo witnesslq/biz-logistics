@@ -71,6 +71,10 @@ public class DbConfig {
             //分页插件
             PageHelper pageHelper = new PageHelper();
             Properties properties = new Properties();
+            properties.setProperty("dialect","mysql");
+            properties.setProperty("offsetAsPageNum", "true");
+            properties.setProperty("rowBoundsWithCount", "true");
+            properties.setProperty("pageSizeZero", "true");
             properties.setProperty("reasonable", "true");
             properties.setProperty("supportMethodsArguments", "true");
             properties.setProperty("returnPageInfo", "check");
