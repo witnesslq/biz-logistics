@@ -11,10 +11,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Collection;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Created by sjf on 16-6-16.
@@ -24,49 +21,52 @@ public class MenuController extends AbstractController<Menu, Long> implements IM
 
     @Autowired
     private MenuService menuService;
-
-    private final static String PATH_SYS = "/sys";
-    private final static String PATH_END = "/menus";
+    
 
     @Override
-    @RequestMapping(value = PATH_SYS + PATH_END + "/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = PATH_SYS_MENU + "/{id}", method = RequestMethod.GET)
     public ResponseEntity<Response> getById(@PathVariable("id") Long aLong) throws Exception {
         return super.getById(aLong);
     }
 
-    @Override
-    @RequestMapping(value = PATH_SYS + PATH_END + "/query", method = RequestMethod.GET)
-    public ResponseEntity<Response> find(@RequestParam("param") Object o) throws Exception {
-        return super.find(o);
+
+    @RequestMapping(value = PATH_SYS_MENU + PATH_QUERY, method = RequestMethod.GET)
+    public ResponseEntity<Response> findList(@RequestParam HashMap<String, Object> o) throws Exception {
+        return find(o);
     }
 
+    /*@RequestMapping(value = PATH_SYS_MENU, method = RequestMethod.GET)
+    public ResponseEntity<Response> getList(@RequestParam HashMap<String, Object> o) throws Exception {
+        return getDetails(o);
+    }*/
+
     @SuppressWarnings("unchecked")
-    @RequestMapping(value = PATH_SYS + PATH_END, method = RequestMethod.GET)
+    @RequestMapping(value = PATH_SYS_MENU, method = RequestMethod.GET)
     public ResponseEntity<Response> get() throws Exception {
         Optional<Collection<Menu>> results = (Optional<Collection<Menu>>) menuService.findAll();
         if (results.isPresent() && results.get().size() > 0){
             List<Menu> list = ((List<Menu>)results.get());
             TreeHelper<Menu> helper = new TreeHelper<>();
-            return ResponseEntity.ok(new Response(1, true, "查询成功", helper.getTree(list)));
+            return ResponseEntity.ok(new Response(1, true, false, "查询成功", helper.getTree(list)));
         }else {
             throw new NoSuchElementException("无数据");
         }
     }
 
     @Override
-    @RequestMapping(value = PATH_SYS + PATH_END, method = RequestMethod.POST)
+    @RequestMapping(value = PATH_SYS_MENU, method = RequestMethod.POST)
     public ResponseEntity<Response> add(@Valid @RequestBody(required = true) Menu record, BindingResult result) throws Exception {
         return super.add(record, result);
     }
 
     @Override
-    @RequestMapping(value = PATH_SYS + PATH_END, method = RequestMethod.PUT)
+    @RequestMapping(value = PATH_SYS_MENU, method = RequestMethod.PUT)
     public ResponseEntity<Response> update(@Valid @RequestBody(required = true) Menu record, BindingResult result) throws Exception {
         return super.update(record, result);
     }
 
     @Override
-    @RequestMapping(value = PATH_SYS + PATH_END + "/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = PATH_SYS_MENU + "/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<Response> delete(@PathVariable("id") Long aLong) throws Exception {
         return super.delete(aLong);
     }

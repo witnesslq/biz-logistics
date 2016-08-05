@@ -73,7 +73,6 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-
 		<!--mybatis pagehelper start-->
 		<dependency>
 			<groupId>org.mybatis.spring.boot</groupId>
@@ -95,6 +94,12 @@
 			<groupId>com.alibaba</groupId>
 			<artifactId>druid</artifactId>
 			<version>1.0.16</version>
+		</dependency>
+		<!-- pinyin -->
+		<dependency>
+			<groupId>com.github.stuxuhai</groupId>
+			<artifactId>jpinyin</artifactId>
+			<version>1.1.7</version>
 		</dependency>
 		<!--my commons-->
 		<dependency>

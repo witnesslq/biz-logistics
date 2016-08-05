@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -23,53 +24,47 @@ public class StandardDistanceController extends AbstractController<StandardDista
     @Autowired
     private StandardDistanceService standardDistanceService;
 
-    private final static String PATH_RUT = "/rut";
-    private final static String PATH_END = "/standard-distances";
-
     @Override
-    @RequestMapping(value = PATH_RUT + PATH_END + "/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = PATH_RUT_DISTANCE + "/{id}", method = RequestMethod.GET)
     public ResponseEntity<Response> getById(@PathVariable("id") Long aLong) throws Exception {
         return super.getById(aLong);
     }
 
-    @Override
-    @RequestMapping(value = PATH_RUT + PATH_END + "/query", method = RequestMethod.GET)
-    public ResponseEntity<Response> find(@RequestParam("param") Object o) throws Exception {
-        return super.find(o);
+    @RequestMapping(value = PATH_RUT_DISTANCE + PATH_QUERY, method = RequestMethod.GET)
+    public ResponseEntity<Response> findList(@RequestParam HashMap<String, Object> o) throws Exception {
+        return find(o);
+    }
+
+    @RequestMapping(value = PATH_RUT_DISTANCE, method = RequestMethod.GET)
+    public ResponseEntity<Response> getList(@RequestParam HashMap<String, Object> o) throws Exception {
+        return getDetails(o);
     }
 
     @Override
-    @RequestMapping(value = PATH_RUT + PATH_END, method = RequestMethod.GET)
-    public ResponseEntity<Response> getByConditions(@RequestBody(required = false) StandardDistance record, @RequestParam int page, @RequestParam int size) throws Exception {
-        return super.getByConditions(record, page, size);
-    }
-
-    @Override
-    @RequestMapping(value = PATH_RUT + PATH_END, method = RequestMethod.POST)
+    @RequestMapping(value = PATH_RUT_DISTANCE, method = RequestMethod.POST)
     public ResponseEntity<Response> add(@Valid @RequestBody(required = true) StandardDistance record, BindingResult result) throws Exception {
         return super.add(record, result);
     }
 
     @Override
-    @RequestMapping(value = PATH_RUT + PATH_END, method = RequestMethod.PUT)
+    @RequestMapping(value = PATH_RUT_DISTANCE, method = RequestMethod.PUT)
     public ResponseEntity<Response> update(@Valid @RequestBody(required = true) StandardDistance record, BindingResult result) throws Exception {
         return super.update(record, result);
     }
 
     @Override
-    @RequestMapping(value = PATH_RUT + PATH_END + "/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = PATH_RUT_DISTANCE + "/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<Response> delete(@PathVariable("id") Long aLong) throws Exception {
         return super.delete(aLong);
     }
 
-    @RequestMapping(value = PATH_RUT + PATH_END + "/dist", method = RequestMethod.GET)
+    @RequestMapping(value = PATH_RUT_DISTANCE + "/dist", method = RequestMethod.GET)
     public ResponseEntity<Response> getDist(@RequestParam Long dept, @RequestParam Long dest, @RequestParam Long com) throws Exception {
         Optional<BigDecimal> dist = standardDistanceService.findDistByIds(dept,dest,com);
-        if (dist.isPresent()) {
-            return ResponseEntity.ok(new Response(1, true, "", dist.get()));
-        }else {
+        if (!dist.isPresent())
             throw new NoSuchElementException("无数据");
-        }
+
+        return ResponseEntity.ok(new Response(1, true, false, "", dist.get()));
     }
 
 }

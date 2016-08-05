@@ -8,47 +8,45 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.HashMap;
 
 /**
  * Created by sjf on 16-7-4.
  */
 @RestController
 public class GroupController  extends AbstractController<Group, Long> implements IGroupController {
-    private final static String PATH_PRE = "/auth";
-    private final static String PATH_END = "/groups";
 
     @Override
-    @RequestMapping(value = PATH_PRE + PATH_END + "/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = PATH_AUTH_GROUP + "/{id}", method = RequestMethod.GET)
     public ResponseEntity<Response> getById(@PathVariable("id") Long aLong) throws Exception {
         return super.getById(aLong);
     }
 
-    @Override
-    @RequestMapping(value = PATH_PRE + PATH_END + "/query", method = RequestMethod.GET)
-    public ResponseEntity<Response> find(@RequestParam("param") Object o) throws Exception {
-        return super.find(Long.valueOf((String)o));
+
+    @RequestMapping(value = PATH_AUTH_GROUP + PATH_QUERY, method = RequestMethod.GET)
+    public ResponseEntity<Response> findList(@RequestParam HashMap<String, Object> o) throws Exception {
+        return find(o);
+    }
+
+    @RequestMapping(value = PATH_AUTH_GROUP, method = RequestMethod.GET)
+    public ResponseEntity<Response> getList(@RequestParam HashMap<String, Object> o) throws Exception {
+        return getDetails(o);
     }
 
     @Override
-    @RequestMapping(value = PATH_PRE + PATH_END, method = RequestMethod.GET)
-    public ResponseEntity<Response> getByConditions(@RequestBody(required = false) Group record, @RequestParam int page, @RequestParam int size) throws Exception {
-        return super.getByConditions(record, page, size);
-    }
-
-    @Override
-    @RequestMapping(value = PATH_PRE + PATH_END, method = RequestMethod.POST)
+    @RequestMapping(value = PATH_AUTH_GROUP, method = RequestMethod.POST)
     public ResponseEntity<Response> add(@Valid @RequestBody(required = true) Group record, BindingResult result) throws Exception {
         return super.add(record, result);
     }
 
     @Override
-    @RequestMapping(value = PATH_PRE + PATH_END, method = RequestMethod.PUT)
+    @RequestMapping(value = PATH_AUTH_GROUP, method = RequestMethod.PUT)
     public ResponseEntity<Response> update(@Valid @RequestBody(required = true) Group record, BindingResult result) throws Exception {
         return super.update(record, result);
     }
 
     @Override
-    @RequestMapping(value = PATH_PRE + PATH_END + "/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = PATH_AUTH_GROUP + "/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<Response> delete(@PathVariable("id") Long aLong) throws Exception {
         return super.delete(aLong);
     }

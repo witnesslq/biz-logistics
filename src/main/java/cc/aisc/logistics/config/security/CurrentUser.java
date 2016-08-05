@@ -17,6 +17,9 @@ public class CurrentUser implements UserDetails {
     private final String password;
     private final String mobile;
     private final Collection<? extends GrantedAuthority> authorities;
+    private final boolean accountNonExpired;
+    private final boolean accountNonLocked;
+    private final boolean credentialsNonExpired;
     private final boolean enabled;
     private final Date lastPasswordResetDate;
 
@@ -26,6 +29,9 @@ public class CurrentUser implements UserDetails {
             String nicename,
             String mobile,
             String password, Collection<? extends GrantedAuthority> authorities,
+            boolean accountNonExpired,
+            boolean accountNonLocked,
+            boolean credentialsNonExpired,
             boolean enabled,
             Date lastPasswordResetDate
     ) {
@@ -35,6 +41,9 @@ public class CurrentUser implements UserDetails {
         this.mobile = mobile;
         this.password = password;
         this.authorities = authorities;
+        this.accountNonExpired = accountNonExpired;
+        this.credentialsNonExpired = credentialsNonExpired;
+        this.accountNonLocked = accountNonLocked;
         this.enabled = enabled;
         this.lastPasswordResetDate = lastPasswordResetDate;
     }
@@ -52,19 +61,19 @@ public class CurrentUser implements UserDetails {
     @JsonIgnore
     @Override
     public boolean isAccountNonExpired() {
-        return true;
+        return accountNonExpired;
     }
 
     @JsonIgnore
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return accountNonLocked;
     }
 
     @JsonIgnore
     @Override
     public boolean isCredentialsNonExpired() {
-        return true;
+        return credentialsNonExpired;
     }
 
     public String getNicename() {

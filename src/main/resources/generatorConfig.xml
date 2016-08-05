@@ -123,7 +123,13 @@
         </javaClientGenerator>
 
 
-        <!--<table tableName="auth_user" domainObjectName="User" enableCountByExample="false"
+
+
+        <!--<table tableName="auth_user_role" domainObjectName="UserRole" enableCountByExample="false"
+               enableUpdateByExample="false" enableDeleteByExample="false"
+               enableSelectByExample="false" selectByExampleQueryId="false">
+            <generatedKey column="id" sqlStatement="Mysql" identity="true" /></table>
+        <table tableName="auth_user" domainObjectName="User" enableCountByExample="false"
                enableUpdateByExample="false" enableDeleteByExample="false"
                enableSelectByExample="false" selectByExampleQueryId="false">
             <generatedKey column="id" sqlStatement="Mysql" identity="true" /></table>

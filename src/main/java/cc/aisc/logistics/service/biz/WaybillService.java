@@ -10,4 +10,6 @@ import java.util.Optional;
  * Created by sjf on 16-5-14.
  */
 public interface WaybillService extends BaseService<Waybill, Long> {
+    int insertWithCars(Waybill wb);
+    Optional<Waybill> getDetailsWithCars(Long id);
 }

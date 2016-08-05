@@ -1,16 +1,17 @@
 package cc.aisc.logistics.service.biz;
 
 import cc.aisc.commons.base.AbstractService;
+import cc.aisc.logistics.mapper.biz.CarMapper;
 import cc.aisc.logistics.mapper.biz.WaybillMapper;
+import cc.aisc.logistics.model.biz.Car;
 import cc.aisc.logistics.model.biz.Waybill;
+import cc.aisc.logistics.model.biz.type.CarStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,8 +22,34 @@ import java.util.Optional;
 @Transactional
 public class WaybillServiceImpl extends AbstractService<Waybill, Long> implements WaybillService {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(WaybillService.class);
+
     @Autowired
     private WaybillMapper waybillMapper;
+    @Autowired
+    private CarMapper carMapper;
+
+    @Override
+    public int insertWithCars(Waybill wb) {
+        int i = waybillMapper.insert(wb);
+        List<Car> cars = wb.getCars();
+        for (Car car : cars){
+            car.setWbId(wb.getId());
+            car.setStatus(CarStatus.PENDING);
+            car.setCurrLoc(wb.getLoadLoc());
+            car.setDestLoc(wb.getUldLoc());
+        }
+        carMapper.insertBatch(cars);
+        return i;
+    }
+
+    @Override
+    public Optional<Waybill> getDetailsWithCars(Long id) {
+        return Optional.ofNullable(waybillMapper.selectDetailedWithCarsBySelective(id).get(0));
+    }
+
+
+}
 
     /*@Override
     //@CacheEvict(value = "deleteWaybillCache", keyGenerator = "redisKeyGenerator")
@@ -87,4 +114,3 @@ public class WaybillServiceImpl extends AbstractService<Waybill, Long> implement
     public Optional<? extends Collection<Waybill>> findByConditions(Waybill con) {
         return super.findByConditions(con);
     }*/
-}

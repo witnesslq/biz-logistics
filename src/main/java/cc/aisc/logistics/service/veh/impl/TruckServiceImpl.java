@@ -34,7 +34,7 @@ public class TruckServiceImpl extends AbstractService<Truck, Long> implements Tr
         if (record != null
                 && (record.getTractor().getStatus().equals(VehicleStatus.SERVING)
                 && record.getTrailer().getStatus().equals(VehicleStatus.SERVING)
-                && record.getDriver().getStatus().equals(DriverStatus.SERVING)))
+                && record.getDriver().getStatus().equals(DriverStatus.ASSIGNED)))
             return record;
         else
             return null;
@@ -46,7 +46,7 @@ public class TruckServiceImpl extends AbstractService<Truck, Long> implements Tr
         if (record != null
                 && (record.getTractor().getStatus().equals(VehicleStatus.SERVING)
                 && record.getTrailer().getStatus().equals(VehicleStatus.SERVING)
-                && record.getDriver().getStatus().equals(DriverStatus.SERVING))) {
+                && record.getDriver().getStatus().equals(DriverStatus.ASSIGNED))) {
             record.setAvailable(true);
             truckMapper.updateByPrimaryKeySelective(record);
             return record;

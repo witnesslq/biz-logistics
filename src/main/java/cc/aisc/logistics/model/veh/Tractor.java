@@ -49,10 +49,10 @@ public class Tractor {
     private Date pucsDate;
 
     @Length(min = 2, max = 4)
-    private String lisnDate;
+    private String lisnDate;//注册日期
 
     @Length(min = 12, max = 20)
-    private String chassisNo;
+    private String chassisNo;//底盘编号
 
     private EmsStdType emsStd;
 

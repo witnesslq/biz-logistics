@@ -8,6 +8,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.HashMap;
 
 /**
  * Created by sjf on 16-6-16.
@@ -15,41 +16,37 @@ import javax.validation.Valid;
 @RestController
 public class CorporationController extends AbstractController<Corporation, Long> implements ICorporationController {
 
-    private final static String PATH_CORP = "/corp";
-    private final static String PATH_END = "/corporations";
-
     @Override
-    @RequestMapping(value = PATH_CORP + PATH_END + "/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = PATH_CORP_CORPORATION + "/{id}", method = RequestMethod.GET)
     public ResponseEntity<Response> getById(@PathVariable("id") Long aLong) throws Exception {
         return super.getById(aLong);
     }
 
-    @Override
-    @RequestMapping(value = PATH_CORP + PATH_END + "/query", method = RequestMethod.GET)
-    public ResponseEntity<Response> find(@RequestParam("param") Object o) throws Exception {
-        return super.find(o);
+
+    @RequestMapping(value = PATH_CORP_CORPORATION + PATH_QUERY, method = RequestMethod.GET)
+    public ResponseEntity<Response> findList(@RequestParam HashMap<String, Object> o) throws Exception {
+        return find(o);
+    }
+
+    @RequestMapping(value = PATH_CORP_CORPORATION, method = RequestMethod.GET)
+    public ResponseEntity<Response> getList(@RequestParam HashMap<String, Object> o) throws Exception {
+        return getDetails(o);
     }
 
     @Override
-    @RequestMapping(value = PATH_CORP + PATH_END, method = RequestMethod.GET)
-    public ResponseEntity<Response> getByConditions(@RequestBody(required = false) Corporation record, @RequestParam int page, @RequestParam int size) throws Exception {
-        return super.getByConditions(record, page, size);
-    }
-
-    @Override
-    @RequestMapping(value = PATH_CORP + PATH_END, method = RequestMethod.POST)
+    @RequestMapping(value = PATH_CORP_CORPORATION, method = RequestMethod.POST)
     public ResponseEntity<Response> add(@Valid @RequestBody(required = true) Corporation record, BindingResult result) throws Exception {
         return super.add(record, result);
     }
 
     @Override
-    @RequestMapping(value = PATH_CORP + PATH_END, method = RequestMethod.PUT)
+    @RequestMapping(value = PATH_CORP_CORPORATION, method = RequestMethod.PUT)
     public ResponseEntity<Response> update(@Valid @RequestBody(required = true) Corporation record, BindingResult result) throws Exception {
         return super.update(record, result);
     }
 
     @Override
-    @RequestMapping(value = PATH_CORP + PATH_END + "/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = PATH_CORP_CORPORATION + "/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<Response> delete(@PathVariable("id") Long aLong) throws Exception {
         return super.delete(aLong);
     }

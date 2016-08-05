@@ -1,24 +1,32 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="cc.aisc.logistics.mapper.veh.TruckMapper" >
-  <resultMap id="ValidResultMap"   type="cc.aisc.logistics.model.veh.Truck" >
+  <resultMap id="ResultMap" type="cc.aisc.logistics.model.veh.Truck">
     <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="status" property="status" typeHandler="org.apache.ibatis.type.EnumOrdinalTypeHandler" />
     <result column="itnl_sn" property="itnlSn" jdbcType="VARCHAR" />
-    <association column="tractor_id" property="tractor" select="selectAssocTractor" />
-    <association column="trailer_id" property="trailer" select="selectAssocTrailer" />
-    <association column="driver_id" property="driver" select="selectAssocDriver" />
-    <association column="codrv_id" property="codrv" select="selectAssocDriver" />
   </resultMap>
-  <resultMap id="BaseResultMap" type="cc.aisc.logistics.model.veh.Truck" extends="ValidResultMap">
+  <resultMap id="BaseResultMap" type="cc.aisc.logistics.model.veh.Truck" extends="ResultMap">
+    <id column="id" property="id" jdbcType="BIGINT" />
     <result column="status" property="status" typeHandler="org.apache.ibatis.type.EnumOrdinalTypeHandler" />
     <result column="remark" property="remark" jdbcType="VARCHAR" />
     <result column="gps_no" property="gpsNo" jdbcType="VARCHAR" />
     <result column="available" property="available" jdbcType="BIT"/>
+    <result column="itnl_sn" property="itnlSn" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap id="ValuedResultMap"   type="cc.aisc.logistics.model.veh.Truck" extends="ResultMap">
+    <association column="driver_id" property="driver" select="selectAssocDriver" />
+  </resultMap>
+  <resultMap id="DetailedResultMap"   type="cc.aisc.logistics.model.veh.Truck" extends="BaseResultMap">
+    <association column="driver_id" property="driver" select="selectAssocDriver" />
+    <association column="tractor_id" property="tractor" select="selectAssocTractor" />
+    <association column="trailer_id" property="trailer" select="selectAssocTrailer" />
+    <association column="codrv_id" property="codrv" select="selectAssocDriver" />
   </resultMap>
   <sql id="Base_Column_List" >
     id, itnl_sn, tractor_id, trailer_id, driver_id, codrv_id, `status`, remark, gps_no, available
   </sql>
-  <sql id="Valid_Column_List" >
+  <sql id="Valued_Column_List" >
     id, itnl_sn, tractor_id, trailer_id, driver_id, codrv_id
   </sql>
   <select id="selectAssocTractor" parameterType="java.lang.Long" resultType="cc.aisc.logistics.model.veh.Tractor">
@@ -36,21 +44,45 @@
     FROM veh_driver
     WHERE id = #{id,jdbcType=BIGINT}
   </select>
-  <select id="selectBySelective" parameterType="java.lang.String" resultMap="ValidResultMap">
+  <select id="selectAll" parameterType="java.util.HashMap" resultMap="BaseResultMap">
     select
-    <include refid="Valid_Column_List" />
+    <include refid="Base_Column_List" />
+    from veh_truck
+  </select>
+  <select id="selectValid" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
     from veh_truck
     where available = 1
-      AND  itnl_sn LIKE CONCAT(CONCAT('%',#{param,jdbcType=VARCHAR},'%'))
-<!--      OR tractor.palte_no LIKE CONCAT(CONCAT('%',#{param,jdbcType=VARCHAR},'%'))
-      OR trailer.palte_no LIKE CONCAT(CONCAT('%',#{param,jdbcType=VARCHAR},'%'))
-      OR driver.name LIKE CONCAT(CONCAT('%',#{param,jdbcType=VARCHAR},'%'))
-      OR codrv.name LIKE CONCAT(CONCAT('%',#{param,jdbcType=VARCHAR},'%'))-->
+  </select>
+  <select id="selectValuedBySelective" parameterType="java.util.HashMap" resultMap="ValuedResultMap">
+    select
+    <include refid="Valued_Column_List" />
+    from veh_truck
+    where available = 1
+    <if test="qt!=null and qt!=''">
+      AND  itnl_sn LIKE CONCAT(CONCAT('%',#{qt,jdbcType=VARCHAR},'%'))
+    </if>
+    <if test="intlSn!=null and intlSn!=''">
+      AND  itnl_sn LIKE CONCAT(CONCAT('%',#{intlSn,jdbcType=VARCHAR},'%'))
+    </if>
+  </select>
+  <select id="selectDetailedBySelective" parameterType="java.util.HashMap" resultMap="DetailedResultMap">
+    select
+    <include refid="Valued_Column_List" />
+    from veh_truck
+    where available = 1
+    <if test="qt!=null and qt!=''">
+      AND  itnl_sn LIKE CONCAT(CONCAT('%',#{qt,jdbcType=VARCHAR},'%'))
+    </if>
+    <if test="intlSn!=null and intlSn!=''">
+      AND  itnl_sn LIKE CONCAT(CONCAT('%',#{intlSn,jdbcType=VARCHAR},'%'))
+    </if>
   </select>
   <select id="selectByMultiConditioned" parameterType="cc.aisc.logistics.model.veh.Truck" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
-    from veh_trailer
+    from veh_truck
     where 1 = 1
     <if test="itnlSn!=null and itnlSn!=''">
       AND  itnl_sn LIKE CONCAT(CONCAT('%',#{itnlSn,jdbcType=VARCHAR},'%'))
@@ -86,21 +118,24 @@
   </delete>
   <insert id="insert" parameterType="cc.aisc.logistics.model.veh.Truck" >
     <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
-      SELECT LAST_INSERT_ID()
+      SELECT next_veh_sn('veh_truck')
     </selectKey>
-    insert into veh_truck (itnl_sn, tractor_id, trailer_id, 
+    insert into veh_truck (id, itnl_sn, tractor_id, trailer_id,
       driver_id, codrv_id, `status`, remark,
       gps_no, available)
-    values (#{itnlSn,jdbcType=VARCHAR}, #{tractor.id,jdbcType=BIGINT}, #{trailer.id,jdbcType=BIGINT},
+    values (#{id,jdbcType=BIGINT},#{itnlSn,jdbcType=VARCHAR}, #{tractor.id,jdbcType=BIGINT}, #{trailer.id,jdbcType=BIGINT},
       #{driver.id,jdbcType=BIGINT}, #{codrv.id,jdbcType=BIGINT}, #{status,typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler}, #{remark,jdbcType=VARCHAR},
       #{gpsNo,jdbcType=VARCHAR},#{available, jdbcType=BIT})
   </insert>
   <insert id="insertSelective" parameterType="cc.aisc.logistics.model.veh.Truck" >
     <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
-      SELECT LAST_INSERT_ID()
+      SELECT next_veh_sn('veh_truck')
     </selectKey>
     insert into veh_truck
     <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null">
+        id,
+      </if>
       <if test="itnlSn != null" >
         itnl_sn,
       </if>
@@ -130,6 +165,9 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null">
+        #{id, jdbcType=BIGINT},
+      </if>
       <if test="itnlSn != null" >
         #{itnlSn,jdbcType=VARCHAR},
       </if>

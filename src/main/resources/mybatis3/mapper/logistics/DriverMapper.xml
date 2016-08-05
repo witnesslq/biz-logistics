@@ -9,20 +9,74 @@
     <result column="mobile" property="mobile" jdbcType="VARCHAR" />
     <result column="status" property="status" typeHandler="org.apache.ibatis.type.EnumOrdinalTypeHandler" />
     <result column="person_id" property="personId" jdbcType="BIGINT" />
-    <result column="belong_comid" property="corp.id" jdbcType="BIGINT" />
+  </resultMap>
+  <resultMap id="ValuedResultMap" type="cc.aisc.logistics.model.veh.Driver" extends="BaseResultMap">
+  </resultMap>
+  <resultMap id="DetailedResultMap" type="cc.aisc.logistics.model.veh.Driver"  extends="ValuedResultMap">
+    <association column="belong_comid" property="corp" select="selectAssocCorp" />
+  </resultMap>
+  <resultMap id="AssocCorpResultMap" type="cc.aisc.logistics.model.corp.Corporation">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name"/>
+    <result column="telephone" jdbcType="VARCHAR" property="telephone"/>
   </resultMap>
   <sql id="Base_Column_List" >
     id, `name`, license, lisn_type, mobile, `status`, person_id, belong_comid
   </sql>
-  <select id="selectBySelective" parameterType="java.lang.String" resultMap="BaseResultMap">
+  <select id="selectAssocCorp" parameterType="java.lang.Long" resultMap="AssocCorpResultMap">
+    SELECT id, `name`, telephone
+    FROM corporation
+    WHERE id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
     from veh_driver
-    where 1 = 1
-    <if test="str!=null and str!=''">
-      AND  `name` LIKE CONCAT(CONCAT('%',#{str,jdbcType=VARCHAR},'%'))
-      OR license LIKE CONCAT(CONCAT('%',#{str,jdbcType=VARCHAR},'%'))
-      OR mobile LIKE CONCAT(CONCAT('%',#{str,jdbcType=VARCHAR},'%'))
+  </select>
+  <select id="selectValid" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from veh_driver
+    where status &lt; 2
+  </select>
+  <select id="selectValuedBySelective" parameterType="java.util.HashMap" resultMap="ValuedResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from veh_driver
+    where status &lt; 2
+    <if test="qt!=null and qt!=''">
+      AND  `name` LIKE CONCAT(CONCAT('%',#{qt,jdbcType=VARCHAR},'%'))
+      OR license LIKE CONCAT(CONCAT('%',#{qt,jdbcType=VARCHAR},'%'))
+      OR mobile LIKE CONCAT(CONCAT('%',#{qt,jdbcType=VARCHAR},'%'))
+    </if>
+    <if test="name!=null and name!=''">
+      AND  `name` LIKE CONCAT(CONCAT('%',#{name,jdbcType=VARCHAR},'%'))
+    </if>
+    <if test="license!=null and license!=''">
+      AND mobile LIKE CONCAT(CONCAT('%',#{qt,jdbcType=VARCHAR},'%'))
+    </if>
+    <if test="mobile!=null and mobile!=''">
+      AND mobile LIKE CONCAT(CONCAT('%',#{mobile,jdbcType=VARCHAR},'%'))
+    </if>
+  </select>
+  <select id="selectDetailedBySelective" parameterType="java.util.HashMap" resultMap="DetailedResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from veh_driver
+    where status &lt; 2
+    <if test="qt!=null and qt!=''">
+      AND  `name` LIKE CONCAT(CONCAT('%',#{qt,jdbcType=VARCHAR},'%'))
+      OR license LIKE CONCAT(CONCAT('%',#{qt,jdbcType=VARCHAR},'%'))
+      OR mobile LIKE CONCAT(CONCAT('%',#{qt,jdbcType=VARCHAR},'%'))
+    </if>
+    <if test="name!=null and name!=''">
+      AND  `name` LIKE CONCAT(CONCAT('%',#{name,jdbcType=VARCHAR},'%'))
+    </if>
+    <if test="license!=null and license!=''">
+      AND mobile LIKE CONCAT(CONCAT('%',#{qt,jdbcType=VARCHAR},'%'))
+    </if>
+    <if test="mobile!=null and mobile!=''">
+      AND mobile LIKE CONCAT(CONCAT('%',#{mobile,jdbcType=VARCHAR},'%'))
     </if>
   </select>
   <select id="selectByMultiConditioned" parameterType="cc.aisc.logistics.model.veh.Driver" resultMap="BaseResultMap">
@@ -46,11 +100,6 @@
       AND status = #{status,jdbcType=INTEGER,typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler}
     </if>
   </select>
-  <select id="selectAll" resultMap="BaseResultMap">
-    select
-    <include refid="Base_Column_List" />
-    from veh_driver
-  </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
     <include refid="Base_Column_List" />
@@ -63,21 +112,24 @@
   </delete>
   <insert id="insert" parameterType="cc.aisc.logistics.model.veh.Driver" >
     <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
-      SELECT LAST_INSERT_ID()
+      SELECT next_veh_sn('veh_driver')
     </selectKey>
-    insert into veh_driver (`name`, license, lisn_type, 
+    insert into veh_driver (id, `name`, license, lisn_type,
       mobile, `status`, person_id, 
       belong_comid)
-    values (#{name,jdbcType=VARCHAR}, #{license,jdbcType=VARCHAR}, #{lisnType,typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler},
+    values (#{id, jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{license,jdbcType=VARCHAR}, #{lisnType,typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler},
       #{mobile,jdbcType=VARCHAR}, #{status,typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler}, #{personId,jdbcType=BIGINT},
       #{corp.id,jdbcType=BIGINT})
   </insert>
   <insert id="insertSelective" parameterType="cc.aisc.logistics.model.veh.Driver" >
     <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
-      SELECT LAST_INSERT_ID()
+      SELECT next_veh_sn('veh_driver')
     </selectKey>
     insert into veh_driver
     <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null">
+        id,
+      </if>
       <if test="name != null" >
         `name`,
       </if>
@@ -101,6 +153,9 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null">
+        #{id, jdbcType=BIGINT},
+      </if>
       <if test="name != null" >
         #{name,jdbcType=VARCHAR},
       </if>

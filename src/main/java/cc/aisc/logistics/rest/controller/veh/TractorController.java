@@ -8,6 +8,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.HashMap;
 
 /**
  * Created by sjf on 16-6-16.
@@ -15,41 +16,38 @@ import javax.validation.Valid;
 @RestController
 public class TractorController extends AbstractController<Tractor, Long> implements ITractorController {
 
-    private final static String PATH_VEH = "/veh";
-    private final static String PATH_END = "/tractors";
+
 
     @Override
-    @RequestMapping(value = PATH_VEH + PATH_END + "/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = PATH_VEH_TRACTOR + "/{id}", method = RequestMethod.GET)
     public ResponseEntity<Response> getById(@PathVariable("id") Long aLong) throws Exception {
         return super.getById(aLong);
     }
 
-    @Override
-    @RequestMapping(value = PATH_VEH + PATH_END + "/query", method = RequestMethod.GET)
-    public ResponseEntity<Response> find(@RequestParam("param") Object o) throws Exception {
-        return super.find(o);
+    @RequestMapping(value = PATH_VEH_TRACTOR + PATH_QUERY, method = RequestMethod.GET)
+    public ResponseEntity<Response> findList(@RequestParam HashMap<String, Object> o) throws Exception {
+        return find(o);
+    }
+
+    @RequestMapping(value = PATH_VEH_TRACTOR, method = RequestMethod.GET)
+    public ResponseEntity<Response> getList(@RequestParam HashMap<String, Object> o) throws Exception {
+        return getDetails(o);
     }
 
     @Override
-    @RequestMapping(value = PATH_VEH + PATH_END, method = RequestMethod.GET)
-    public ResponseEntity<Response> getByConditions(@RequestBody(required = false) Tractor record, @RequestParam int page, @RequestParam int size) throws Exception {
-        return super.getByConditions(record, page, size);
-    }
-
-    @Override
-    @RequestMapping(value = PATH_VEH + PATH_END, method = RequestMethod.POST)
+    @RequestMapping(value = PATH_VEH_TRACTOR, method = RequestMethod.POST)
     public ResponseEntity<Response> add(@Valid @RequestBody(required = true) Tractor record, BindingResult result) throws Exception {
         return super.add(record, result);
     }
 
     @Override
-    @RequestMapping(value = PATH_VEH + PATH_END, method = RequestMethod.PUT)
+    @RequestMapping(value = PATH_VEH_TRACTOR, method = RequestMethod.PUT)
     public ResponseEntity<Response> update(@Valid @RequestBody(required = true) Tractor record, BindingResult result) throws Exception {
         return super.update(record, result);
     }
 
     @Override
-    @RequestMapping(value = PATH_VEH + PATH_END + "/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = PATH_VEH_TRACTOR + "/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<Response> delete(@PathVariable("id") Long aLong) throws Exception {
         return super.delete(aLong);
     }

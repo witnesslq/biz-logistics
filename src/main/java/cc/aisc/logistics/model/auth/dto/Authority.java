@@ -1,31 +1,42 @@
 package cc.aisc.logistics.model.auth.dto;
 
+import cc.aisc.logistics.model.auth.Permission;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 /**
  * Created by sjf on 16-7-6.
  */
 public class Authority {
 
-    private String authName;
-    private String [] mode;
+    private String auth;
 
-    public Authority(String authName, String[] mode) {
-        this.authName = authName;
-        this.mode = mode;
+    public Authority(Permission perm) {
+        this.auth = String.valueOf(perm.getResource().getId() * 100 + perm.getPermType().ordinal());
+
     }
 
-    public String getAuthName() {
-        return authName;
+    public String getAuth() {
+        return auth;
     }
 
-    public void setAuthName(String authName) {
-        this.authName = authName;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Authority authority = (Authority) o;
+
+        return new EqualsBuilder()
+                .append(auth, authority.auth)
+                .isEquals();
     }
 
-    public String[] getMode() {
-        return mode;
-    }
-
-    public void setMode(String[] mode) {
-        this.mode = mode;
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37)
+                .append(auth)
+                .toHashCode();
     }
 }

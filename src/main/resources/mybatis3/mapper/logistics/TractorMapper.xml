@@ -4,15 +4,20 @@
   <resultMap id="BaseResultMap" type="cc.aisc.logistics.model.veh.Tractor" >
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="plate_no" property="plateNo" jdbcType="VARCHAR" />
-    <result column="manufacturer" property="manufacturer" jdbcType="VARCHAR" />
-    <result column="veh_brand" property="vehBrand" jdbcType="VARCHAR" />
-    <result column="veh_model" property="vehModel" jdbcType="VARCHAR" />
     <result column="power" property="power" jdbcType="SMALLINT" />
-    <result column="style" property="style" jdbcType="VARCHAR" />
-    <result column="vin" property="vin" jdbcType="VARCHAR" />
     <result column="drv_lisn" property="drvLisn" jdbcType="VARCHAR" />
     <result column="logi_lisn" property="logiLisn" jdbcType="VARCHAR" />
     <result column="isrn_dtl_id" property="isrnDtlId" jdbcType="BIGINT" />
+    <result column="status" property="status" typeHandler="org.apache.ibatis.type.EnumOrdinalTypeHandler"/>
+  </resultMap>
+  <resultMap id="ValuedResultMap" type="cc.aisc.logistics.model.veh.Tractor" extends="BaseResultMap">
+  </resultMap>
+  <resultMap id="DetailedResultMap" type="cc.aisc.logistics.model.veh.Tractor" extends="BaseResultMap">
+    <result column="manufacturer" property="manufacturer" jdbcType="VARCHAR" />
+    <result column="veh_brand" property="vehBrand" jdbcType="VARCHAR" />
+    <result column="veh_model" property="vehModel" jdbcType="VARCHAR" />
+    <result column="style" property="style" jdbcType="VARCHAR" />
+    <result column="vin" property="vin" jdbcType="VARCHAR" />
     <result column="prdt_date" property="prdtDate" jdbcType="TIMESTAMP" />
     <result column="pucs_date" property="pucsDate" jdbcType="TIMESTAMP" />
     <result column="lisn_date" property="lisnDate" jdbcType="CHAR" />
@@ -22,22 +27,64 @@
     <result column="veh_width" property="vehWidth" jdbcType="SMALLINT" />
     <result column="veh_height" property="vehHeight" jdbcType="SMALLINT" />
     <result column="remark" property="remark" jdbcType="VARCHAR" />
-    <result column="belong_comid" property="corp.id" jdbcType="BIGINT" />
-    <result column="status" property="status" typeHandler="org.apache.ibatis.type.EnumOrdinalTypeHandler"/>
+    <association column="belong_comid" property="corp" select="selectAssocCorp" />
+  </resultMap>
+  <resultMap id="AssocCorpResultMap" type="cc.aisc.logistics.model.corp.Corporation">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name"/>
+    <result column="telephone" jdbcType="VARCHAR" property="telephone"/>
   </resultMap>
   <sql id="Base_Column_List" >
     id, plate_no, manufacturer, veh_brand, veh_model, `power`, `style`, vin, drv_lisn, 
     logi_lisn, isrn_dtl_id, prdt_date, pucs_date, lisn_date, chassis_no, ems_std, veh_length, 
     veh_width, veh_height, remark, belong_comid, status
   </sql>
-  <select id="selectBySelective" parameterType="java.lang.String" resultMap="BaseResultMap">
+  <select id="selectAssocCorp" parameterType="java.lang.Long" resultMap="AssocCorpResultMap">
+    SELECT id, `name`, telephone
+    FROM corporation
+    WHERE id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
     from veh_tractor
-    where 1 = 1
-    <if test="str!=null and str!=''">
-      AND  plate_no LIKE CONCAT(CONCAT('%',#{str,jdbcType=VARCHAR},'%'))
-      OR drv_lisn LIKE CONCAT(CONCAT('%',#{str,jdbcType=VARCHAR},'%'))
+  </select>
+  <select id="selectValid" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from veh_tractor
+    WHERE status &lt; 5
+  </select>
+  <select id="selectValuedBySelective" parameterType="java.util.HashMap" resultMap="ValuedResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from veh_tractor
+    where status &lt; 5
+    <if test="qt!=null and qt!=''">
+      AND  (plate_no LIKE CONCAT(CONCAT('%',#{val,jdbcType=VARCHAR},'%'))
+      OR drv_lisn LIKE CONCAT(CONCAT('%',#{val,jdbcType=VARCHAR},'%')))
+    </if>
+    <if test="plateNo!=null and plateNo!=''">
+      AND  (plate_no LIKE CONCAT(CONCAT('%',#{plateNo,jdbcType=VARCHAR},'%'))
+    </if>
+    <if test="drvLisn!=null and drvLisn!=''">
+      AND drv_lisn LIKE CONCAT(CONCAT('%',#{drvLisn,jdbcType=VARCHAR},'%')))
+    </if>
+  </select>
+  <select id="selectDetailedBySelective" parameterType="java.util.HashMap" resultMap="DetailedResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from veh_tractor
+    where status &lt; 5
+    <if test="qt!=null and qt!=''">
+      AND  (plate_no LIKE CONCAT(CONCAT('%',#{val,jdbcType=VARCHAR},'%'))
+      OR drv_lisn LIKE CONCAT(CONCAT('%',#{val,jdbcType=VARCHAR},'%')))
+    </if>
+    <if test="plateNo!=null and plateNo!=''">
+      AND  (plate_no LIKE CONCAT(CONCAT('%',#{plateNo,jdbcType=VARCHAR},'%'))
+    </if>
+    <if test="drvLisn!=null and drvLisn!=''">
+      AND drv_lisn LIKE CONCAT(CONCAT('%',#{drvLisn,jdbcType=VARCHAR},'%')))
     </if>
   </select>
   <select id="selectByMultiConditioned" parameterType="cc.aisc.logistics.model.veh.Tractor" resultMap="BaseResultMap">
@@ -91,16 +138,16 @@
   </delete>
   <insert id="insert" parameterType="cc.aisc.logistics.model.veh.Tractor" >
     <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
-      SELECT LAST_INSERT_ID()
+      SELECT  next_veh_sn('veh_tractor')
     </selectKey>
-    insert into veh_tractor (plate_no, manufacturer, veh_brand, 
+    insert into veh_tractor (id, plate_no, manufacturer, veh_brand,
       veh_model, `power`, `style`, 
       vin, drv_lisn, logi_lisn, 
       isrn_dtl_id, prdt_date, pucs_date, 
       lisn_date, chassis_no, ems_std, 
       veh_length, veh_width, veh_height, 
       remark, belong_comid,status)
-    values (#{plateNo,jdbcType=VARCHAR}, #{manufacturer,jdbcType=VARCHAR}, #{vehBrand,jdbcType=VARCHAR}, 
+    values (#{id,jdbcType=BIGINT},#{plateNo,jdbcType=VARCHAR}, #{manufacturer,jdbcType=VARCHAR}, #{vehBrand,jdbcType=VARCHAR},
       #{vehModel,jdbcType=VARCHAR}, #{power,jdbcType=SMALLINT}, #{style,jdbcType=VARCHAR}, 
       #{vin,jdbcType=VARCHAR}, #{drvLisn,jdbcType=VARCHAR}, #{logiLisn,jdbcType=VARCHAR}, 
       #{isrnDtlId,jdbcType=BIGINT}, #{prdtDate,jdbcType=TIMESTAMP}, #{pucsDate,jdbcType=TIMESTAMP}, 
@@ -110,10 +157,13 @@
   </insert>
   <insert id="insertSelective" parameterType="cc.aisc.logistics.model.veh.Tractor" >
     <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
-      SELECT LAST_INSERT_ID()
+      SELECT next_veh_sn('veh_tractor')
     </selectKey>
     insert into veh_tractor
     <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null">
+        id,
+      </if>
       <if test="plateNo != null" >
         plate_no,
       </if>
@@ -179,6 +229,9 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null">
+        #{id, jdbcType=BIGINT},
+      </if>
       <if test="plateNo != null" >
         #{plateNo,jdbcType=VARCHAR},
       </if>

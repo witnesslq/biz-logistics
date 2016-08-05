@@ -1,4 +1,4 @@
-package cc.aisc.logistics.model.biz.trspt.type;
+package cc.aisc.logistics.model.biz.type;
 
 /**
  * Created by sjf on 16-6-21.
@@ -23,7 +23,7 @@ public enum ScheduleStatus {
     }
 
     ScheduleStatus(int code, String description){
-        this.code = new Integer(code);
+        this.code = code;
         this.description = description;
     }
 }

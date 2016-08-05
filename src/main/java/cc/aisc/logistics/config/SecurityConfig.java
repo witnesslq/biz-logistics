@@ -1,11 +1,14 @@
 package cc.aisc.logistics.config;
 
+import cc.aisc.commons.response.Response;
 import cc.aisc.logistics.config.security.JwtAuthenticationFilter;
+import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -26,11 +29,16 @@ import javax.servlet.http.HttpServletResponse;
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
+@Order(SecurityProperties.ACCESS_OVERRIDE_ORDER)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private UserDetailsService userDetailsService;
 
+/*    @Bean
+    public AuthenticationProvider jwtAuthenticationProvider(){
+        return new JwtAuthenticationProvider();
+    }*/
 
     /*public void configureAuthentication(AuthenticationManagerBuilder auth) throws Exception {
         auth
@@ -49,6 +57,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return super.authenticationManagerBean();
     }*/
 
+    @Autowired
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth
+/*                .authenticationProvider(jwtAuthenticationProvider())*/
+                .userDetailsService(this.userDetailsService);
+                //.passwordEncoder(passwordEncoder());
+    }
+
     @Bean
     public JwtAuthenticationFilter authenticationFilterBean() throws Exception {
         JwtAuthenticationFilter authenticationFilter = new JwtAuthenticationFilter();
@@ -58,7 +74,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public AuthenticationEntryPoint unauthorizedEntryPoint() {
-        return (request, response, authException) -> response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+        return (request, response, authException) -> {
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            Response resp = new Response(400001,true, false, "未登录",null);
+            response.getWriter().write(JSONObject.fromObject(resp).toString());
+        };
+                /*response.sendError(HttpServletResponse.SC_UNAUTHORIZED);*/
     }
 
     @Override
@@ -85,7 +108,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/**/*.css",
                         "/**/*.js"
                 ).permitAll()
-                .antMatchers("/auth/**").permitAll()
+                .antMatchers("/auth/**", "/sys/**","/biz/**","/rut/**","/corp/**","/veh/**","/login").permitAll()
                 .anyRequest().authenticated();
 
         // Custom JWT based security filter
@@ -96,10 +119,4 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         httpSecurity.headers().cacheControl();
     }
 
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth
-                .userDetailsService(this.userDetailsService)
-                .passwordEncoder(passwordEncoder());
-    }
 }
